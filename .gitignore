@@ -1,0 +1,10 @@
+.DS_Store
+*.swp
+.project
+.idea/
+.vscode/
+.jshintrc
+.vs/
+
+node_modules/
+temp/
