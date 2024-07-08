@@ -11,7 +11,8 @@ class Application {
 
         this.celestialObjects = celestialObjects;
         for (const obj of this.celestialObjects) {
-            this.scene.add(obj.mesh);
+            this.scene.add(obj.meshGroup);
+            obj.showRotationAxis = true;
         }
 
         // test
@@ -33,29 +34,9 @@ class Application {
         document.body.appendChild(this.renderer.domElement);
     }
 
-    $updateObject(obj, jd, basePosition) {
-        // calculate the position of the object
-        const [baseX, baseY, baseZ] = basePosition;
-        const position = obj.positionAtTime(jd);
-
-        const [x, y, z] = [position.x + baseX, position.y + baseY, position.z + baseZ];
-        obj.mesh.position.set(x, y, z);
-
-        // set scale
-        const minAngularRadius = 0.005;
-        const dis = this.camera.position.distanceTo(obj.mesh.position);
-        const realAngularRadius = Math.atan(obj.radius / dis);
-
-        obj.mesh.scale.setScalar(Math.max(minAngularRadius / realAngularRadius, 1));
-
-        for (const child of obj.children) {
-            this.$updateObject(child, jd, [x, y, z]);
-        }
-    }
-
     renderAtTime(jd) {
         // assume the first object is the sun
-        this.$updateObject(this.celestialObjects[0], jd, [0, 0, 0]);
+        this.celestialObjects[0].update(this.scene, this.camera, jd, [0, 0, 0]);
         this.renderer.render(this.scene, this.camera);
     }
 

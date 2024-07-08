@@ -1,6 +1,7 @@
 import Application from './stellara/core/app.js';
 import { CelestialObject } from './stellara/core/celestial_object.js';
 import * as Orbit from './stellara/core/orbit.js';
+import * as Rotation from './stellara/core/rotation.js';
 import { radii } from './stellara/core/solar_system_data.js';
 
 class EventBus {
@@ -36,9 +37,9 @@ class EventBus {
 }
 
 const eventBus = new EventBus();
-const moon = new CelestialObject("Moon", [], new Orbit.MoonOrbit(), radii.moon);
-const earth = new CelestialObject("Earth", [moon], new Orbit.EarthOrbit(), radii.earth);
-const sun = new CelestialObject("Sun", [earth], new Orbit.SunOrbit(), radii.sun);
+const moon = new CelestialObject("Moon", [], new Orbit.MoonOrbit(), radii.moon, new Rotation.MoonRotation());
+const earth = new CelestialObject("Earth", [moon], new Orbit.EarthOrbit(), radii.earth, new Rotation.EarthRotation());
+const sun = new CelestialObject("Sun", [earth], new Orbit.SunOrbit(), radii.sun, new Rotation.SunRotation());
 const app = new Application([sun, earth, moon]);
 
 app.animate();
