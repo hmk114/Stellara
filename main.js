@@ -1,23 +1,44 @@
-import * as THREE from 'three';
+import Application from './stellara/core/app.js';
+import { CelestialObject } from './stellara/core/celestial_object.js';
+import * as Orbit from './stellara/core/orbit.js';
+import { radii } from './stellara/core/solar_system_data.js';
 
-const scene = new THREE.Scene();
-const camera = new THREE.PerspectiveCamera(75, window.innerWidth / window.innerHeight, 0.1, 1000);
+class EventBus {
+    constructor() {
+        this.publishedEvents = {};
+    }
 
-const renderer = new THREE.WebGLRenderer();
-renderer.setSize(window.innerWidth, window.innerHeight);
-document.body.appendChild(renderer.domElement);
+    publish(eventName, ...args) {
+        const callbacks = this.publishedEvents[eventName];
 
-const geometry = new THREE.BoxGeometry(1, 1, 1);
-const material = new THREE.MeshBasicMaterial({ color: 0x00ff00 });
-const cube = new THREE.Mesh(geometry, material);
-scene.add(cube);
+        if (!callbacks) {
+            console.warn(eventName + " not found!");
+            return;
+        }
 
-camera.position.z = 5;
+        for (let callback of callbacks) {
+            callback(...args);
+        }
+    }
 
-function animate() {
-    requestAnimationFrame(animate);
-    cube.rotation.x += 0.01;
-    cube.rotation.y += 0.01;
-    renderer.render(scene, camera);
+    subscribe(eventName, callback) {
+        if (typeof callback !== "function") {
+            console.warn("callback must be a function!");
+            return;
+        }
+
+        if (!this.publishedEvents[eventName]) {
+            this.publishedEvents[eventName] = [];
+        }
+
+        this.publishedEvents[eventName].push(callback);
+    }
 }
-animate();
+
+const eventBus = new EventBus();
+const moon = new CelestialObject("Moon", [], new Orbit.MoonOrbit(), radii.moon);
+const earth = new CelestialObject("Earth", [moon], new Orbit.EarthOrbit(), radii.earth);
+const sun = new CelestialObject("Sun", [earth], new Orbit.SunOrbit(), radii.sun);
+const app = new Application([sun, earth, moon]);
+
+app.animate();
