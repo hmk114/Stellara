@@ -8,6 +8,8 @@ class Application {
         this.camera = new THREE.PerspectiveCamera(50, window.innerWidth / window.innerHeight, 0.00001, 100);
         this.renderer = new THREE.WebGLRenderer({ antialias: true });
         this.renderer.setSize(window.innerWidth, window.innerHeight);
+        this.renderer.shadowMap.enabled = true;
+        // this.renderer.shadowMap.type = THREE.PCFSoftShadowMap;
 
         this.celestialObjects = celestialObjects;
         for (const obj of this.celestialObjects) {
@@ -16,26 +18,43 @@ class Application {
         }
 
         // test
-        const geometry = new THREE.SphereGeometry(0.01, 32, 32);
-        const meshz = new THREE.Mesh(geometry, new THREE.MeshBasicMaterial({ color: 0x0000ff }));
-        meshz.position.set(0, 0, 1);
-        this.scene.add(meshz);
+        // const geometry = new THREE.SphereGeometry(0.005, 32, 32);
+        // const meshz = new THREE.Mesh(geometry, new THREE.MeshStandardMaterial({ color: 0x0000ff }));
+        // meshz.position.set(0, 0, 0.01);
+        // meshz.castShadow = true;
+        // meshz.receiveShadow = true;
+        // this.scene.add(meshz);
 
         // light
-        const ambientLight = new THREE.AmbientLight(0xffffff, 0.5);
+        const ambientLight = new THREE.AmbientLight(0x404040, 1);
         this.scene.add(ambientLight);
 
-        const pointLight = new THREE.PointLight(0x0f0f0f, 1);
-        pointLight.position.set(celestialObjects[0].meshGroup.position);
-        // console.log(celestialObjects[0].meshGroup.position);
+        const pointLight = new THREE.PointLight(0xffffff, 3);
+        pointLight.position.set(0, 0, 0);
+        console.log(celestialObjects[0].position);
+        pointLight.castShadow = true;
         this.scene.add(pointLight);
 
-        this.camera.position.set(0, 5, 0);
+
+        pointLight.shadow.mapSize.width = 1024;
+        pointLight.shadow.mapSize.height = 1024;
+        pointLight.shadow.camera.near = 0.5;
+        pointLight.shadow.camera.far = 100;
+
+        // const directionalLight = new THREE.DirectionalLight(0xffffff, 10);
+        // directionalLight.position.set(celestialObjects[0].position);
+
+        // directionalLight.castShadow = true;
+        
+        // this.scene.add(directionalLight);
+
+        // console.log(celestialObjects[0].position);
+        
+
+
+        this.camera.position.set(0, 1, 0);
+
         this.camera.up.set(0, 0, 1);
-        var position = new THREE.Vector3(0, 0, 0);
-        this.celestialObjects[0].meshGroup.getWorldPosition(position);
-        console.log(position);
-        this.camera.lookAt(position);
 
         this.controls = new OrbitControls(this.camera, this.renderer.domElement);
         this.controls.enableDamping = true;

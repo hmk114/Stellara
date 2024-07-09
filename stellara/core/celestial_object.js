@@ -1,5 +1,6 @@
 import * as THREE from 'three';
 
+
 class CelestialObject {
     constructor(name, children, orbit, rotation, geometryCreator, materialCreator) {
         this.$name = name;
@@ -22,6 +23,51 @@ class CelestialObject {
     }
 
     $createMeshes() {
+
+//         const geometry = new THREE.SphereGeometry(this.$radius, 64, 64);
+//         const texture = new THREE.TextureLoader();
+
+//         if (this.$name === "Sun") {
+//             texture.load(
+//                 "stellara/assets/texture/sun.jpg",
+//                 (texture) => { 
+//                     this.$mesh.material.map = texture;
+//                     this.$mesh.material.needsUpdate = true;
+//                     this.$mesh.castShadow = false;
+//                     this.$mesh.receiveShadow = false;
+//                     this.$mesh.material.emissive = new THREE.Color(0xff4500);
+//                     this.$mesh.material.emissiveIntensity = 0.8;
+//                 },
+//             )
+//         }
+
+//         else if (this.$name === "Moon") {
+//             texture.load(
+//                 "stellara/assets/texture/moon.jpg",
+//                 (texture) => {
+//                     this.$mesh.material.map = texture;
+//                     this.$mesh.material.needsUpdate = true;
+//                     this.$mesh.castShadow = true;
+//                     this.$mesh.receiveShadow = true;
+//                 },
+//             )
+//         }
+        
+//         else if (this.$name === "Earth") {
+//             texture.load(
+//                 "stellara/assets/texture/earth.jpg",
+//                 (texture) => {
+//                     this.$mesh.material.map = texture;
+//                     this.$mesh.material.needsUpdate = true;
+//                     this.$mesh.castShadow = true;
+//                     this.$mesh.receiveShadow = true;
+//                 },
+//             )
+//         }
+//         const material = new THREE.MeshStandardMaterial({ map: texture });
+//         this.$mesh = new THREE.Mesh(geometry, material);
+
+
         const geometry = this.$geometryCreator.create();
         const material = this.$materialCreator.create();
         this.$mesh = new THREE.Mesh(geometry, material);
