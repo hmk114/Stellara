@@ -33,7 +33,7 @@ class EarthRotation extends Rotation {
     constructor() {
         super();
         this.obliquity = 23.439281 * Math.PI / 180;
-        this.axis = new THREE.Vector3(0, Math.cos(this.obliquity), Math.sin(this.obliquity));
+        this.axis = new THREE.Vector3(0, Math.sin(this.obliquity), Math.cos(this.obliquity));
     }
 
     getRotationAxis() {
