@@ -1,13 +1,15 @@
 import * as THREE from 'three';
 
 class CelestialObject {
-    constructor(name, children, orbit, radius, rotation) {
+    constructor(name, children, orbit, rotation, geometryCreator, materialCreator) {
         this.$name = name;
         this.$children = children;
         this.$orbit = orbit;
 
-        this.$radius = radius;
         this.$rotation = rotation;
+
+        this.$geometryCreator = geometryCreator;
+        this.$materialCreator = materialCreator;
 
         this.$visible = true;
         this.$showOrbit = false;
@@ -20,13 +22,13 @@ class CelestialObject {
     }
 
     $createMeshes() {
-        const geometry = new THREE.SphereGeometry(this.$radius, 32, 32);
-        const material = new THREE.MeshBasicMaterial({ color: 0xffff00 });
+        const geometry = this.$geometryCreator.create();
+        const material = this.$materialCreator.create();
         this.$mesh = new THREE.Mesh(geometry, material);
 
         if (this.$rotation) {
-            const vertex1 = this.$mesh.position.clone().add(this.$rotation.getRotationAxis().multiplyScalar(this.$radius * 2));
-            const vertex2 = this.$mesh.position.clone().sub(this.$rotation.getRotationAxis().multiplyScalar(this.$radius * 2));
+            const vertex1 = this.$mesh.position.clone().add(this.$rotation.getRotationAxis().multiplyScalar(geometry.parameters.radius * 2));
+            const vertex2 = this.$mesh.position.clone().sub(this.$rotation.getRotationAxis().multiplyScalar(geometry.parameters.radius * 2));
             const axisGeometry = new THREE.BufferGeometry().setFromPoints([vertex1, vertex2]);
             const axisMaterial = new THREE.LineDashedMaterial({ color: 0xffffff });
             this.$axisMesh = new THREE.Line(axisGeometry, axisMaterial);
@@ -89,7 +91,7 @@ class CelestialObject {
     }
 
     get radius() {
-        return this.$radius;
+        return this.$mesh.geometry.parameters.radius;
     }
 
     get meshGroup() {
@@ -111,12 +113,14 @@ class CelestialObject {
 
         // apply rotation
         const { axis, angle } = this.$rotationAtTime(jd);
-        this.$mesh.rotateOnWorldAxis(axis, angle);
+        if (this.$name === 'Earth') {
+        }
+        this.$mesh.setRotationFromAxisAngle(axis, angle);
 
         // set scale
         const minAngularRadius = 0.002;
         const dis = camera.position.distanceTo(this.$mesh.position);
-        const realAngularRadius = Math.atan(this.$radius / dis);
+        const realAngularRadius = Math.atan(this.radius / dis);
 
         this.$mesh.scale.setScalar(Math.max(minAngularRadius / realAngularRadius, 1));
 
