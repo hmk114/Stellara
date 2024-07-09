@@ -25,7 +25,7 @@ class SunRotation extends Rotation {
 
     rotationAtTime(jd) {
         // ignore offset
-        return 2 * Math.PI * Math.floor(jd / 25.38);
+        return 2 * Math.PI * ((jd / 25.38) % 1);
     }
 }
 
@@ -42,7 +42,7 @@ class EarthRotation extends Rotation {
 
     rotationAtTime(jd) {
         // https://en.wikipedia.org/wiki/Sidereal_time
-        return 2 * Math.PI * Math.floor(0.7790572732640 + 1.00273781191135448 * (jd - 2451545.0));
+        return 2 * Math.PI * ((0.7790572732640 + 1.00273781191135448 * (jd - 2451545.0)) % 1);
     }
 }
 
@@ -59,7 +59,7 @@ class MoonRotation extends Rotation {
     rotationAtTime(jd) {
         // ignore offset
         // 13.18 degrees per day
-        return 2 * Math.PI * Math.floor(jd * 13.18 / 360);
+        return 2 * Math.PI * ((jd * 13.18 / 360) % 1);
     }
 }
 

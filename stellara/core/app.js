@@ -30,7 +30,6 @@ class Application {
         // console.log(celestialObjects[0].meshGroup.position);
         this.scene.add(pointLight);
 
-
         this.camera.position.set(0, 5, 0);
         this.camera.up.set(0, 0, 1);
         var position = new THREE.Vector3(0, 0, 0);
@@ -53,7 +52,7 @@ class Application {
         };
 
         this.currentTime = new Date();
-        this.timeSpeed = 86400;
+        this.timeSpeed = 8640;
         this.lastRenderTime = null;
 
         document.body.appendChild(this.renderer.domElement);
