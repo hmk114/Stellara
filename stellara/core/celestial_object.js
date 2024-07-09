@@ -1,6 +1,6 @@
 import * as THREE from 'three';
 
-class CelestialObject {
+class CelestialObject{
     constructor(name, children, orbit, radius, rotation) {
         this.$name = name;
         this.$children = children;
@@ -29,6 +29,10 @@ class CelestialObject {
                 (texture) => { 
                     this.$mesh.material.map = texture;
                     this.$mesh.material.needsUpdate = true;
+                    this.$mesh.castShadow = false;
+                    this.$mesh.receiveShadow = false;
+                    this.$mesh.material.emissive = new THREE.Color(0xff4500);
+                    this.$mesh.material.emissiveIntensity = 0.8;
                 },
             )
         }
@@ -39,6 +43,8 @@ class CelestialObject {
                 (texture) => {
                     this.$mesh.material.map = texture;
                     this.$mesh.material.needsUpdate = true;
+                    this.$mesh.castShadow = true;
+                    this.$mesh.receiveShadow = true;
                 },
             )
         }
@@ -49,12 +55,14 @@ class CelestialObject {
                 (texture) => {
                     this.$mesh.material.map = texture;
                     this.$mesh.material.needsUpdate = true;
+                    this.$mesh.castShadow = true;
+                    this.$mesh.receiveShadow = true;
                 },
             )
         }
-        const material = new THREE.MeshBasicMaterial({ map: texture });
-        // const material = new THREE.MeshBasicMaterial({ color: 0xff0000 });
+        const material = new THREE.MeshStandardMaterial({ map: texture });
         this.$mesh = new THREE.Mesh(geometry, material);
+
 
 
         if (this.$rotation) {
