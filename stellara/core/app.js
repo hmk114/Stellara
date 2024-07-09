@@ -9,7 +9,8 @@ class Application {
         this.renderer = new THREE.WebGLRenderer({ antialias: true });
         this.renderer.setSize(window.innerWidth, window.innerHeight);
         this.renderer.shadowMap.enabled = true;
-        // this.renderer.shadowMap.type = THREE.PCFSoftShadowMap;
+        this.renderer.shadowMap.type = THREE.PCFSoftShadowMap;
+        
 
         this.celestialObjects = celestialObjects;
         for (const obj of this.celestialObjects) {
@@ -18,12 +19,22 @@ class Application {
         }
 
         // test
-        // const geometry = new THREE.SphereGeometry(0.005, 32, 32);
-        // const meshz = new THREE.Mesh(geometry, new THREE.MeshStandardMaterial({ color: 0x0000ff }));
-        // meshz.position.set(0, 0, 0.01);
-        // meshz.castShadow = true;
-        // meshz.receiveShadow = true;
-        // this.scene.add(meshz);
+        const geometry = new THREE.SphereGeometry(0.005, 32, 32);
+        const meshz = new THREE.Mesh(geometry, new THREE.MeshStandardMaterial({ color: 0x0000ff }));
+        meshz.position.set(0, 0, 0.01);
+        meshz.castShadow = true;
+        meshz.receiveShadow = true;
+        this.scene.add(meshz);
+
+
+        const geometry1 = new THREE.SphereGeometry(0.005, 32, 32);
+        const meshz1 = new THREE.Mesh(geometry1, new THREE.MeshStandardMaterial({ color: 0x0000ff }));
+        meshz1.position.set(0, 0, 0.025);
+        meshz1.castShadow = true;
+        meshz1.receiveShadow = true;
+        this.scene.add(meshz1);
+
+
 
         // light
         const ambientLight = new THREE.AmbientLight(0x404040, 1);
@@ -31,7 +42,6 @@ class Application {
 
         const pointLight = new THREE.PointLight(0xffffff, 3);
         pointLight.position.set(0, 0, 0);
-        console.log(celestialObjects[0].position);
         pointLight.castShadow = true;
         this.scene.add(pointLight);
 
@@ -41,15 +51,6 @@ class Application {
         pointLight.shadow.camera.near = 0.5;
         pointLight.shadow.camera.far = 100;
 
-        // const directionalLight = new THREE.DirectionalLight(0xffffff, 10);
-        // directionalLight.position.set(celestialObjects[0].position);
-
-        // directionalLight.castShadow = true;
-        
-        // this.scene.add(directionalLight);
-
-        // console.log(celestialObjects[0].position);
-        
 
 
         this.camera.position.set(0, 1, 0);
@@ -71,7 +72,7 @@ class Application {
         };
 
         this.currentTime = new Date();
-        this.timeSpeed = 8640;
+        this.timeSpeed = 86400;
         this.lastRenderTime = null;
 
         document.body.appendChild(this.renderer.domElement);
@@ -80,15 +81,16 @@ class Application {
     animate() {
         requestAnimationFrame(() => this.animate());
 
-        if (this.lastRenderTime) {
-            this.currentTime = new Date(this.currentTime.getTime() + (Date.now() - this.lastRenderTime.getTime()) * this.timeSpeed);
-        }
+        // if (this.lastRenderTime) {
+        //     this.currentTime = new Date(this.currentTime.getTime() + (Date.now() - this.lastRenderTime.getTime()) * this.timeSpeed);
+        // }
+        this.currentTime = new Date("2009-7-22 10:36");
         this.lastRenderTime = new Date();
 
         const jd = convertToJulianDate(this.currentTime);
         this.celestialObjects[0].update(this.scene, this.camera, jd, [0, 0, 0]);
 
-        this.controls.target = this.celestialObjects[1].position;
+        this.controls.target = this.celestialObjects[0].position;
         this.controls.trackTarget();
         this.controls.update();
 

@@ -38,9 +38,9 @@ class EventBus {
 }
 
 const eventBus = new EventBus();
-const moon = new CelestialObject("Moon", [], new Orbit.MoonOrbit(), new Rotation.MoonRotation(), new Meshes.MoonGeometryCreator(), new Meshes.MaterialCreator('stellara/assets/texture/moon.jpg'));
-const earth = new CelestialObject("Earth", [moon], new Orbit.EarthOrbit(), new Rotation.EarthRotation(), new Meshes.EarthGeometryCreator(), new Meshes.MaterialCreator('stellara/assets/texture/earth.jpg'));
-const sun = new CelestialObject("Sun", [earth], new Orbit.SunOrbit(), new Rotation.SunRotation(), new Meshes.SunGeometryCreator(), new Meshes.MaterialCreator('stellara/assets/texture/sun.jpg'));
+const moon = new CelestialObject("Moon", [], new Orbit.MoonOrbit(), new Rotation.MoonRotation(), new Meshes.MoonGeometryCreator(), new Meshes.MoonMaterialCreator());
+const earth = new CelestialObject("Earth", [moon], new Orbit.EarthOrbit(), new Rotation.EarthRotation(), new Meshes.EarthGeometryCreator(), new Meshes.EarthMaterialCreator());
+const sun = new CelestialObject("Sun", [earth], new Orbit.SunOrbit(), new Rotation.SunRotation(), new Meshes.SunGeometryCreator(), new Meshes.SunMaterialCreator());
 const app = new Application([sun, earth, moon]);
 
 app.animate();

@@ -1,4 +1,4 @@
-import { BufferGeometry, Float32BufferAttribute, Vector3, Matrix3, TextureLoader, MeshBasicMaterial } from 'three';
+import { BufferGeometry, Float32BufferAttribute, Vector3, Matrix3, TextureLoader, Color, MeshStandardMaterial, MeshBasicMaterial } from 'three';
 import { radii } from './solar_system_data.js';
 
 class CelestialObjectGeometry extends BufferGeometry {
@@ -148,18 +148,90 @@ class MaterialCreator {
         this.texturePath = texturePath;
     }
 
+}
+
+class SunMaterialCreator extends MaterialCreator {
+    constructor() {
+        super('stellara/assets/texture/sun.jpg');
+    }
+
     create() {
         const texture = new TextureLoader();
-        const material = new MeshBasicMaterial({ map: texture });
+        const material = new MeshStandardMaterial({ map: texture });
         texture.load(
             this.texturePath,
             (texture) => {
                 material.map = texture;
                 material.needsUpdate = true;
+                material.castShadow = true;
+                material.receiveShadow = false;
+                material.emissive = new Color(0xd3480a);
+                material.emissiveIntensity = 1;
             },
         )
+        
         return material;
     }
 }
 
-export { SunGeometryCreator, EarthGeometryCreator, MoonGeometryCreator, MaterialCreator };
+class EarthMaterialCreator extends MaterialCreator {
+    constructor() {
+        super('stellara/assets/texture/earth.jpg');
+        this.alternateTexturePath = 'stellara/assets/texture/earth_water.jpg';
+        this.currentTexturePath = this.texturePath;
+    }
+
+    create() {
+        const texture = new TextureLoader();
+        const material = new MeshStandardMaterial({ map: texture });
+        texture.load(
+            this.currentTexturePath,
+            (texture) => {
+                material.map = texture;
+                material.needsUpdate = true;
+                material.castShadow = true;
+                material.receiveShadow = true;
+            },
+        )
+
+        return material;
+    }
+
+    switchTexture() {
+        this.currentTexturePath = this.currentTexturePath === this.texturePath ? this.alternateTexturePath : this.texturePath;
+        const texture = new TextureLoader();
+        texture.load(
+            this.currentTexturePath,
+            (texture) => {
+                this.material.map = texture;
+                this.material.needsUpdate = true;
+            },
+        )
+    }
+
+}
+
+class MoonMaterialCreator extends MaterialCreator {
+    constructor() {
+        super('stellara/assets/texture/moon.jpg');
+    }
+
+    create() {
+        const texture = new TextureLoader();
+        const material = new MeshStandardMaterial({ map: texture });
+        texture.load(
+            this.texturePath,
+            (texture) => {
+                material.map = texture;
+                material.needsUpdate = true;
+                material.castShadow = true;
+                material.receiveShadow = true;
+            },
+        )
+
+        return material;
+    }
+}
+
+
+export { SunGeometryCreator, EarthGeometryCreator, MoonGeometryCreator, MoonMaterialCreator, SunMaterialCreator, EarthMaterialCreator };
