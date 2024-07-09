@@ -20,9 +20,42 @@ class CelestialObject {
     }
 
     $createMeshes() {
-        const geometry = new THREE.SphereGeometry(this.$radius, 32, 32);
-        const material = new THREE.MeshBasicMaterial({ color: 0xffff00 });
+        const geometry = new THREE.SphereGeometry(this.$radius, 64, 64);
+        const texture = new THREE.TextureLoader();
+
+        if (this.$name === "Sun") {
+            texture.load(
+                "stellara/assets/texture/sun.jpg",
+                (texture) => { 
+                    this.$mesh.material.map = texture;
+                    this.$mesh.material.needsUpdate = true;
+                },
+            )
+        }
+
+        else if (this.$name === "Moon") {
+            texture.load(
+                "stellara/assets/texture/moon.jpg",
+                (texture) => {
+                    this.$mesh.material.map = texture;
+                    this.$mesh.material.needsUpdate = true;
+                },
+            )
+        }
+        
+        else if (this.$name === "Earth") {
+            texture.load(
+                "stellara/assets/texture/earth.jpg",
+                (texture) => {
+                    this.$mesh.material.map = texture;
+                    this.$mesh.material.needsUpdate = true;
+                },
+            )
+        }
+        const material = new THREE.MeshBasicMaterial({ map: texture });
+        // const material = new THREE.MeshBasicMaterial({ color: 0xff0000 });
         this.$mesh = new THREE.Mesh(geometry, material);
+
 
         if (this.$rotation) {
             const vertex1 = this.$mesh.position.clone().add(this.$rotation.getRotationAxis().multiplyScalar(this.$radius * 2));
