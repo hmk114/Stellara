@@ -35,6 +35,7 @@ class Application {
         pointLight.castShadow = true;
         this.scene.add(pointLight);
 
+
         pointLight.shadow.mapSize.width = 1024;
         pointLight.shadow.mapSize.height = 1024;
         pointLight.shadow.camera.near = 0.5;
@@ -52,6 +53,7 @@ class Application {
 
 
         this.camera.position.set(0, 1, 0);
+
         this.camera.up.set(0, 0, 1);
 
         this.controls = new OrbitControls(this.camera, this.renderer.domElement);
@@ -69,7 +71,7 @@ class Application {
         };
 
         this.currentTime = new Date();
-        this.timeSpeed = 86400;
+        this.timeSpeed = 8640;
         this.lastRenderTime = null;
 
         document.body.appendChild(this.renderer.domElement);

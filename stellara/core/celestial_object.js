@@ -1,13 +1,16 @@
 import * as THREE from 'three';
 
-class CelestialObject{
-    constructor(name, children, orbit, radius, rotation) {
+
+class CelestialObject {
+    constructor(name, children, orbit, rotation, geometryCreator, materialCreator) {
         this.$name = name;
         this.$children = children;
         this.$orbit = orbit;
 
-        this.$radius = radius;
         this.$rotation = rotation;
+
+        this.$geometryCreator = geometryCreator;
+        this.$materialCreator = materialCreator;
 
         this.$visible = true;
         this.$showOrbit = false;
@@ -20,54 +23,58 @@ class CelestialObject{
     }
 
     $createMeshes() {
-        const geometry = new THREE.SphereGeometry(this.$radius, 64, 64);
-        const texture = new THREE.TextureLoader();
 
-        if (this.$name === "Sun") {
-            texture.load(
-                "stellara/assets/texture/sun.jpg",
-                (texture) => { 
-                    this.$mesh.material.map = texture;
-                    this.$mesh.material.needsUpdate = true;
-                    this.$mesh.castShadow = false;
-                    this.$mesh.receiveShadow = false;
-                    this.$mesh.material.emissive = new THREE.Color(0xff4500);
-                    this.$mesh.material.emissiveIntensity = 0.8;
-                },
-            )
-        }
+//         const geometry = new THREE.SphereGeometry(this.$radius, 64, 64);
+//         const texture = new THREE.TextureLoader();
 
-        else if (this.$name === "Moon") {
-            texture.load(
-                "stellara/assets/texture/moon.jpg",
-                (texture) => {
-                    this.$mesh.material.map = texture;
-                    this.$mesh.material.needsUpdate = true;
-                    this.$mesh.castShadow = true;
-                    this.$mesh.receiveShadow = true;
-                },
-            )
-        }
+//         if (this.$name === "Sun") {
+//             texture.load(
+//                 "stellara/assets/texture/sun.jpg",
+//                 (texture) => { 
+//                     this.$mesh.material.map = texture;
+//                     this.$mesh.material.needsUpdate = true;
+//                     this.$mesh.castShadow = false;
+//                     this.$mesh.receiveShadow = false;
+//                     this.$mesh.material.emissive = new THREE.Color(0xff4500);
+//                     this.$mesh.material.emissiveIntensity = 0.8;
+//                 },
+//             )
+//         }
+
+//         else if (this.$name === "Moon") {
+//             texture.load(
+//                 "stellara/assets/texture/moon.jpg",
+//                 (texture) => {
+//                     this.$mesh.material.map = texture;
+//                     this.$mesh.material.needsUpdate = true;
+//                     this.$mesh.castShadow = true;
+//                     this.$mesh.receiveShadow = true;
+//                 },
+//             )
+//         }
         
-        else if (this.$name === "Earth") {
-            texture.load(
-                "stellara/assets/texture/earth.jpg",
-                (texture) => {
-                    this.$mesh.material.map = texture;
-                    this.$mesh.material.needsUpdate = true;
-                    this.$mesh.castShadow = true;
-                    this.$mesh.receiveShadow = true;
-                },
-            )
-        }
-        const material = new THREE.MeshStandardMaterial({ map: texture });
+//         else if (this.$name === "Earth") {
+//             texture.load(
+//                 "stellara/assets/texture/earth.jpg",
+//                 (texture) => {
+//                     this.$mesh.material.map = texture;
+//                     this.$mesh.material.needsUpdate = true;
+//                     this.$mesh.castShadow = true;
+//                     this.$mesh.receiveShadow = true;
+//                 },
+//             )
+//         }
+//         const material = new THREE.MeshStandardMaterial({ map: texture });
+//         this.$mesh = new THREE.Mesh(geometry, material);
+
+
+        const geometry = this.$geometryCreator.create();
+        const material = this.$materialCreator.create();
         this.$mesh = new THREE.Mesh(geometry, material);
 
-
-
         if (this.$rotation) {
-            const vertex1 = this.$mesh.position.clone().add(this.$rotation.getRotationAxis().multiplyScalar(this.$radius * 2));
-            const vertex2 = this.$mesh.position.clone().sub(this.$rotation.getRotationAxis().multiplyScalar(this.$radius * 2));
+            const vertex1 = this.$mesh.position.clone().add(this.$rotation.getRotationAxis().multiplyScalar(geometry.parameters.radius * 2));
+            const vertex2 = this.$mesh.position.clone().sub(this.$rotation.getRotationAxis().multiplyScalar(geometry.parameters.radius * 2));
             const axisGeometry = new THREE.BufferGeometry().setFromPoints([vertex1, vertex2]);
             const axisMaterial = new THREE.LineDashedMaterial({ color: 0xffffff });
             this.$axisMesh = new THREE.Line(axisGeometry, axisMaterial);
@@ -130,7 +137,7 @@ class CelestialObject{
     }
 
     get radius() {
-        return this.$radius;
+        return this.$mesh.geometry.parameters.radius;
     }
 
     get meshGroup() {
@@ -152,12 +159,14 @@ class CelestialObject{
 
         // apply rotation
         const { axis, angle } = this.$rotationAtTime(jd);
-        this.$mesh.rotateOnWorldAxis(axis, angle);
+        if (this.$name === 'Earth') {
+        }
+        this.$mesh.setRotationFromAxisAngle(axis, angle);
 
         // set scale
         const minAngularRadius = 0.002;
         const dis = camera.position.distanceTo(this.$mesh.position);
-        const realAngularRadius = Math.atan(this.$radius / dis);
+        const realAngularRadius = Math.atan(this.radius / dis);
 
         this.$mesh.scale.setScalar(Math.max(minAngularRadius / realAngularRadius, 1));
 
