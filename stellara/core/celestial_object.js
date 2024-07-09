@@ -96,6 +96,10 @@ class CelestialObject {
         return this.$meshGroup;
     }
 
+    get position() {
+        return this.$mesh.position.clone();
+    }
+
     update(scene, camera, jd, basePosition) {
         // calculate the position of the object
         const [baseX, baseY, baseZ] = basePosition;
@@ -110,7 +114,7 @@ class CelestialObject {
         this.$mesh.rotateOnWorldAxis(axis, angle);
 
         // set scale
-        const minAngularRadius = 0.005;
+        const minAngularRadius = 0.002;
         const dis = camera.position.distanceTo(this.$mesh.position);
         const realAngularRadius = Math.atan(this.$radius / dis);
 

@@ -158,7 +158,7 @@ class MoonOrbit extends Orbit {
             e * .000521 * Math.sin(4 * de - ms) + .000486 * Math.sin(2 * md - de);
         l = l + e2 * .000717 * Math.sin(md - 2 * ms);
         eclLon = ld + degToRad(l);
-        eclLon = eclLon - Math.PI * Math.floor(eclLon / Math.PI);
+        eclLon = eclLon - 2 * Math.PI * Math.floor(eclLon / (2 * Math.PI));
 
         g = 5.12819 * Math.sin(f) + .280606 * Math.sin(md + f) + .277693 * Math.sin(md - f) +
             .173238 * Math.sin(2 * de - f) + .055413 * Math.sin(2 * de + f - md) + .046272 * Math.sin(2 * de - f - md) +
