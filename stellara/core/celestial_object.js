@@ -28,6 +28,11 @@ class CelestialObject {
         const material = this.$materialCreator.create();
         this.$mesh = new THREE.Mesh(geometry, material);
 
+        if (this.$name !== 'Sun') {
+        this.$mesh.castShadow = true;
+        this.$mesh.receiveShadow = true;
+        }
+
         if (this.$rotation) {
             const vertex1 = this.$mesh.position.clone().add(this.$rotation.getRotationAxis().multiplyScalar(geometry.parameters.radius * 2));
             const vertex2 = this.$mesh.position.clone().sub(this.$rotation.getRotationAxis().multiplyScalar(geometry.parameters.radius * 2));

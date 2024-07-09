@@ -139,7 +139,7 @@ class MoonGeometryCreator extends GeometryCreator {
     }
 
     create() {
-        return new CelestialObjectGeometry(radii.moon);
+        return new CelestialObjectGeometry(radii.moon * 18);
     }
 }
 
@@ -163,8 +163,6 @@ class SunMaterialCreator extends MaterialCreator {
             (texture) => {
                 material.map = texture;
                 material.needsUpdate = true;
-                material.castShadow = true;
-                material.receiveShadow = false;
                 material.emissive = new Color(0xd3480a);
                 material.emissiveIntensity = 1;
             },
@@ -189,8 +187,6 @@ class EarthMaterialCreator extends MaterialCreator {
             (texture) => {
                 material.map = texture;
                 material.needsUpdate = true;
-                material.castShadow = true;
-                material.receiveShadow = true;
             },
         )
 
@@ -224,8 +220,6 @@ class MoonMaterialCreator extends MaterialCreator {
             (texture) => {
                 material.map = texture;
                 material.needsUpdate = true;
-                material.castShadow = true;
-                material.receiveShadow = true;
             },
         )
 
