@@ -22,12 +22,12 @@ class Application {
         }
 
         // test
-        // const geometry = new THREE.SphereGeometry(0.005, 32, 32);
-        // const meshz = new THREE.Mesh(geometry, new THREE.MeshStandardMaterial({ color: 0x0000ff }));
-        // meshz.position.set(0, 0, 0.01);
-        // meshz.castShadow = true;
-        // meshz.receiveShadow = true;
-        // this.scene.add(meshz);
+        const geometry = new THREE.SphereGeometry(0.005, 32, 32);
+        const meshz = new THREE.Mesh(geometry, new THREE.MeshStandardMaterial({ color: 0x0000ff }));
+        meshz.position.set(0, 0, 0.01);
+        meshz.castShadow = true;
+        meshz.receiveShadow = true;
+        this.scene.add(meshz);
 
         // let meshz_shadow = new ShadowMesh(meshz);
         // this.scene.add(meshz_shadow);
@@ -43,7 +43,7 @@ class Application {
         // this.scene.add(meshz_shadow1);
 
         // light
-        const ambientLight = new THREE.AmbientLight(0x404040, 1);
+        const ambientLight = new THREE.AmbientLight(0x404040, 1.5);
         this.scene.add(ambientLight);
 
         const pointLight = new THREE.PointLight(0xffffff, 3);
@@ -55,6 +55,7 @@ class Application {
         pointLight.shadow.camera.far = 10;
         this.scene.add(pointLight);
         
+        // camera init
         this.camera.position.set(0, 1, 0);
         this.camera.up.set(0, 0, 1);
 
@@ -82,14 +83,17 @@ class Application {
     animate() {
         requestAnimationFrame(() => this.animate());
 
-        // if (this.lastRenderTime) {
-        //     this.currentTime = new Date(this.currentTime.getTime() + (Date.now() - this.lastRenderTime.getTime()) * this.timeSpeed);
-        // }
-        this.currentTime = new Date("2009-7-22 10:35");
+        if (this.lastRenderTime) {
+            this.currentTime = new Date(this.currentTime.getTime() + (Date.now() - this.lastRenderTime.getTime()) * this.timeSpeed);
+        }
+        // this.currentTime = new Date("2009-7-22 10:35");
         this.lastRenderTime = new Date();
 
         const jd = convertToJulianDate(this.currentTime);
         this.celestialObjects[0].update(this.scene, this.camera, jd, [0, 0, 0]);
+
+        // Note: You can use the following code to switch the texture of the Earth object.
+            // this.celestialObjects[1].switchTexture();
 
         this.controls.target = this.celestialObjects[1].position;
         this.controls.trackTarget();

@@ -47,6 +47,10 @@ class Orbit {
     positionAtTime(jd) {
         throw new Error("positionAtTime() must be implemented by subclass.");
     }
+
+    orbitAtTime(jd) {
+        throw new Error("orbitAtTime() must be implemented by subclass.");
+    }
 }
 
 class SunOrbit extends Orbit {
@@ -57,6 +61,17 @@ class SunOrbit extends Orbit {
     // always at the origin
     positionAtTime(jd) {
         return new Vector3();
+    }
+
+    orbitAtTime(jd) {
+        const orbitPoints = [];
+        // const numPoints = 1000;
+        // const dt = 365 / numPoints;
+        // for (let i = 0; i < numPoints; i++) {
+        //     const jd1 = jd + i * dt;
+        //     orbitPoints.push(this.positionAtTime(jd1));
+        // }
+        return orbitPoints;
     }
 }
 
@@ -69,6 +84,17 @@ class EarthOrbit extends Orbit {
     // relative to sun's body center
     positionAtTime(jd) {
         return calcPositionLBR(jd, this.orbitData);
+    }
+
+    orbitAtTime(jd) {
+        const orbitPoints = [];
+        const numPoints = 700;
+        const dt = 365.3 / 1000;
+        for (let i = -300; i < numPoints; i++) {
+            const jd1 = jd + i * dt;
+            orbitPoints.push(this.positionAtTime(jd1));
+        }
+        return orbitPoints;
     }
 }
 
@@ -206,6 +232,18 @@ class MoonOrbit extends Orbit {
             distance * Math.cos(eclLat) * Math.sin(eclLon),
             distance * Math.sin(eclLat)
         );
+    }
+
+    orbitAtTime(jd) {
+        const orbitPoints = [];
+        const numPoints = 300;
+        const dt = 27.32 / 500;
+        for (let i = -200; i < numPoints; i++) {
+            const jd1 = jd + i * dt;
+            orbitPoints.push(this.positionAtTime(jd1));
+        }
+        orbitPoints.push(this.positionAtTime(jd - 200 * dt));
+        return orbitPoints;
     }
 }
 

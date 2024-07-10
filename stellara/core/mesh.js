@@ -139,7 +139,7 @@ class MoonGeometryCreator extends GeometryCreator {
     }
 
     create() {
-        return new CelestialObjectGeometry(radii.moon * 18);
+        return new CelestialObjectGeometry(radii.moon * 1);
     }
 }
 
@@ -193,14 +193,15 @@ class EarthMaterialCreator extends MaterialCreator {
         return material;
     }
 
-    switchTexture() {
+    switchTexture(material) {
         this.currentTexturePath = this.currentTexturePath === this.texturePath ? this.alternateTexturePath : this.texturePath;
         const texture = new TextureLoader();
+
         texture.load(
             this.currentTexturePath,
             (texture) => {
-                this.material.map = texture;
-                this.material.needsUpdate = true;
+                material.map = texture;
+                material.needsUpdate = true;
             },
         )
     }

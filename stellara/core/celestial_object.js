@@ -13,7 +13,7 @@ class CelestialObject {
         this.$materialCreator = materialCreator;
 
         this.$visible = true;
-        this.$showOrbit = false;
+        this.$showOrbit = true;
         this.$showRotationAxis = false;
 
         // meshGroup contains all currently visible meshes
@@ -75,6 +75,10 @@ class CelestialObject {
         this.$updateMeshGroup();
     }
 
+    set showOrbit(value) {
+        this.$showOrbit = value;
+    }
+
     $positionAtTime(jd) {
         return this.$orbit ? this.$orbit.positionAtTime(jd) : new Vector3();
     }
@@ -118,6 +122,27 @@ class CelestialObject {
         this.$mesh.position.set(x, y, z);
         this.$axisMesh.position.set(x, y, z);
 
+        // update orbit
+        if (this.$showOrbit) {
+            // To be optimized
+            const orbitPoints = this.$orbit.orbitAtTime(jd);
+            if (orbitPoints.length !== 0) {
+                for (let i = 0; i < orbitPoints.length; i++) {
+                    orbitPoints[i] = new THREE.Vector3(orbitPoints[i].x + baseX, orbitPoints[i].y + baseY, orbitPoints[i].z + baseZ);
+                }
+                let orbitGeometry = new THREE.BufferGeometry().setFromPoints(orbitPoints);
+                if (this.orbitMesh) {
+                    this.orbitMesh.geometry.dispose();
+                    this.orbitMesh.geometry = orbitGeometry;
+                } else {
+                    const orbitMaterial = this.$name === 'Earth' ? new THREE.LineDashedMaterial({ color: 0x0000ff }) : new THREE.LineBasicMaterial({ color: 0xffffff });
+                    this.orbitMesh = new THREE.Line(orbitGeometry, orbitMaterial);
+                    scene.add(this.orbitMesh);
+                }
+            }
+            
+        }
+
         // apply rotation
         const { axis, angle } = this.$rotationAtTime(jd);
         if (this.$name === 'Earth') {
@@ -133,6 +158,12 @@ class CelestialObject {
 
         for (const child of this.$children) {
             child.update(scene, camera, jd, [x, y, z]);
+        }
+    }
+
+    switchTexture() {
+        if (this.$name === 'Earth') {
+            this.$materialCreator.switchTexture(this.$mesh.material);
         }
     }
 }
