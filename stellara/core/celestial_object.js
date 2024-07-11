@@ -1,6 +1,7 @@
 'use strict';
 
 import * as THREE from 'three';
+import { update } from 'three/examples/jsm/libs/tween.module.js';
 
 class CelestialObject {
     #name;
@@ -10,6 +11,7 @@ class CelestialObject {
     #rotation;
     #geometry;
     #materials;
+    #orbitMaterial;
     #curMaterialIndex;
 
     #visible;
@@ -21,17 +23,19 @@ class CelestialObject {
 
     #mesh;
     #axisMesh;
+    #orbitMesh;
     #meshGroup;
 
-    constructor(name, children, orbit, rotation, geometry, materials, curMaterialIndex = 0, castShadow = true, receiveShadow = true) {
+    constructor(name, children, orbit, rotation, geometry, materials, orbitMaterial, curMaterialIndex = 0, castShadow = true, receiveShadow = true) {
         this.#name = name;
         this.#children = children;
         this.#orbit = orbit;
 
         this.#rotation = rotation;
-        
+
         this.#geometry = geometry;
         this.#materials = materials;
+        this.#orbitMaterial = orbitMaterial;
         this.#curMaterialIndex = curMaterialIndex;
 
         this.#visible = true;
@@ -43,7 +47,7 @@ class CelestialObject {
 
         // meshGroup contains all currently visible meshes
         this.#meshGroup = new THREE.Group();
-        
+
         this.#createMeshes();
         this.#updateMeshGroup();
     }
@@ -59,6 +63,8 @@ class CelestialObject {
             const axisMaterial = new THREE.LineDashedMaterial({ color: 0xffffff });
             this.#axisMesh = new THREE.Line(axisGeometry, axisMaterial);
         }
+
+        this.#orbitMesh = new THREE.Line(new THREE.BufferGeometry(), this.#orbitMaterial);
     }
 
     #updateMeshGroup() {
@@ -76,6 +82,7 @@ class CelestialObject {
 
         updateMesh(this.#mesh, this.#visible);
         updateMesh(this.#axisMesh, this.#visible && this.#showRotationAxis);
+        updateMesh(this.#orbitMesh, this.#visible && this.#showOrbit);
     }
 
     /**
@@ -164,25 +171,17 @@ class CelestialObject {
 
         // TODO: move into meshGroup
         // update orbit
-        if (this.#showOrbit) {
-            // TODO: To be optimized
-            const orbitPoints = this.#orbit.orbitAtTime(jd);
-            if (orbitPoints.length !== 0) {
-                for (let i = 0; i < orbitPoints.length; i++) {
-                    orbitPoints[i] = new THREE.Vector3(orbitPoints[i].x + baseX, orbitPoints[i].y + baseY, orbitPoints[i].z + baseZ);
-                }
-                let orbitGeometry = new THREE.BufferGeometry().setFromPoints(orbitPoints);
-                if (this.orbitMesh) {
-                    this.orbitMesh.geometry.dispose();
-                    this.orbitMesh.geometry = orbitGeometry;
-                } else {
-                    const orbitMaterial = this.#name === 'Earth' ? new THREE.LineDashedMaterial({ color: 0x0000ff }) : new THREE.LineBasicMaterial({ color: 0xffffff });
-                    this.orbitMesh = new THREE.Line(orbitGeometry, orbitMaterial);
-                    scene.add(this.orbitMesh);
-                }
+
+        const orbitPoints = this.#orbit.orbitCurve(jd);
+        if (orbitPoints.length !== 0) {
+            for (let i = 0; i < orbitPoints.length; i++) {
+                orbitPoints[i] = new THREE.Vector3(orbitPoints[i].x + baseX, orbitPoints[i].y + baseY, orbitPoints[i].z + baseZ);
             }
-            
+            let orbitGeometry = new THREE.BufferGeometry().setFromPoints(orbitPoints);
+            this.#orbitMesh.geometry.dispose();
+            this.#orbitMesh.geometry = orbitGeometry;
         }
+
 
         // apply rotation
         const { axis, angle } = this.#rotationAtTime(jd);

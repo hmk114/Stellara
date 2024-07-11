@@ -87,7 +87,7 @@ class Application {
 
         // this.currentTime = new Date();
         this.#currentTime = new Date("2024-10-03 02:30:00");
-        this.#timeSpeed = 120;
+        this.#timeSpeed = 86400; 
         this.#lastRenderTime = null;
 
         document.body.appendChild(this.#renderer.domElement);
@@ -111,8 +111,11 @@ class Application {
         this.#celestialObjects[0].updatePosition(this.#scene, this.#camera, jd, [0, 0, 0]);
 
         // Note: You can use the following code to switch the texture of the Earth object.
-            // this.celestialObjects[1].switchTexture();
+            // this.celestialObjects[1].switchTexture(1);
 
+        
+        // Note: You can use the following code to switch the focus of the camera to the Earth object.
+        // 0: Sun, 1: Earth, 2: Moon
         this.#controls.target = this.#celestialObjects[1].position;
         this.#controls.trackTarget();
         this.#controls.update();
