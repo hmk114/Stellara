@@ -1,6 +1,9 @@
+'use strict';
+
 import { KM_PER_AU } from "./constants.js";
 import { Vector3 } from "three";
 import { vsop87_data } from "./solar_system_data.js";
+import { or } from "three/examples/jsm/nodes/Nodes.js";
 
 function sumSeries(series, t) {
     let x = 0.0;
@@ -47,6 +50,10 @@ class Orbit {
     positionAtTime(jd) {
         throw new Error("positionAtTime() must be implemented by subclass.");
     }
+
+    orbitAtTime(jd) {
+        throw new Error("orbitAtTime() must be implemented by subclass.");
+    }
 }
 
 class SunOrbit extends Orbit {
@@ -58,9 +65,36 @@ class SunOrbit extends Orbit {
     positionAtTime(jd) {
         return new Vector3();
     }
+
+    orbitAtTime(jd) {
+        const orbitPoints = [];
+        // const numPoints = 1000;
+        // const dt = 365 / numPoints;
+        // for (let i = 0; i < numPoints; i++) {
+        //     const jd1 = jd + i * dt;
+        //     orbitPoints.push(this.positionAtTime(jd1));
+        // }
+        return orbitPoints;
+    }
+
+    orbitCurve() {
+        return [];
+    }
 }
 
 class EarthOrbit extends Orbit {
+
+    #orbitPoints = [];
+    #numPoints = 1000;
+    #total = 365.6;
+    #dt = this.#total / this.#numPoints;
+    #prevHead;
+    #prevTail;
+    #lastTime;
+
+    rangeLow = this.#numPoints * -0.3;
+    rangeHigh = this.#numPoints * 0.5;
+
     constructor() {
         super();
         this.orbitData = vsop87_data.earth;
@@ -70,9 +104,67 @@ class EarthOrbit extends Orbit {
     positionAtTime(jd) {
         return calcPositionLBR(jd, this.orbitData);
     }
+
+    orbitAtTime(jd) {
+        const orbitPoints = [];
+        for (let i = this.rangeLow; i < this.rangeHigh; i++) {
+            const jd1 = jd + i * this.#dt;
+            orbitPoints.push(this.positionAtTime(jd1));
+        }
+        this.#prevHead = jd + this.rangeLow * this.#dt;
+        this.#prevTail = jd + this.rangeHigh * this.#dt;
+        this.#lastTime = jd;
+        return orbitPoints;
+    }
+
+    orbitCurve(jd) {
+        if (this.#orbitPoints.length === 0) {
+            this.#orbitPoints = this.orbitAtTime(jd);
+        } else {
+            if (jd > this.#lastTime) {
+                const now_head = jd + this.rangeLow * this.#dt;
+                // const now_tail = jd + this.range_high * this.#dt;
+                while (this.#prevHead < now_head) {
+                    this.#orbitPoints.shift();
+                    this.#prevHead += this.#dt;
+                }
+                while (this.#orbitPoints.length < this.rangeHigh - this.rangeLow) {
+                    this.#orbitPoints.push(this.positionAtTime(this.#prevTail));
+                    this.#prevTail += this.#dt;
+                }
+
+            } else if (jd < this.#lastTime) {
+                const now_tail = jd + this.rangeHigh * this.#dt;
+                while (this.#prevTail > now_tail) {
+                    this.#orbitPoints.pop();
+                    this.#prevTail -= this.#dt;
+                }
+                while (this.#orbitPoints.length < this.rangeHigh - this.rangeLow) {
+                    this.#orbitPoints.unshift(this.positionAtTime(this.#prevHead - this.#dt));
+                    this.#prevHead -= this.#dt;
+                }
+            }
+           
+        }
+        const PointsCopy = this.#orbitPoints.slice();
+        return PointsCopy;
+    }
+    
 }
 
 class MoonOrbit extends Orbit {
+
+    #orbitPoints = [];
+    #numPoints = 200;
+    #total = 27.32;
+    #dt = this.#total / this.#numPoints;
+    #prevHead;
+    #prevTail;
+    #lastTime;
+
+    rangeLow = this.#numPoints * -0.3;
+    rangeHigh = this.#numPoints * 0.4;
+
     constructor() {
         super();
     }
@@ -207,6 +299,52 @@ class MoonOrbit extends Orbit {
             distance * Math.sin(eclLat)
         );
     }
+
+    orbitAtTime(jd) {
+        const orbitPoints = [];
+        for (let i = this.rangeLow; i < this.rangeHigh; i++) {
+            const jd1 = jd + i * this.#dt;
+            orbitPoints.push(this.positionAtTime(jd1));
+        }
+        this.#prevHead = jd + this.rangeLow * this.#dt;
+        this.#prevTail = jd + this.rangeHigh * this.#dt;
+        this.#lastTime = jd;
+        return orbitPoints;
+    }
+
+    orbitCurve(jd) {
+        if (this.#orbitPoints.length === 0) {
+            this.#orbitPoints = this.orbitAtTime(jd);
+        } else {
+            if (jd > this.#lastTime) {
+                const now_head = jd + this.rangeLow * this.#dt;
+                // const now_tail = jd + this.range_high * this.#dt;
+                while (this.#prevHead < now_head) {
+                    this.#orbitPoints.shift();
+                    this.#prevHead += this.#dt;
+                }
+                while (this.#orbitPoints.length < this.rangeHigh - this.rangeLow) {
+                    this.#orbitPoints.push(this.positionAtTime(this.#prevTail));
+                    this.#prevTail += this.#dt;
+                }
+
+            } else if (jd < this.#lastTime) {
+                const now_tail = jd + this.rangeHigh * this.#dt;
+                while (this.#prevTail > now_tail) {
+                    this.#orbitPoints.pop();
+                    this.#prevTail -= this.#dt;
+                }
+                while (this.#orbitPoints.length < this.rangeHigh - this.rangeLow) {
+                    this.#orbitPoints.unshift(this.positionAtTime(this.#prevHead - this.#dt));
+                    this.#prevHead -= this.#dt;
+                }
+            }
+           
+        }
+        const PointsCopy = this.#orbitPoints.slice();
+        return PointsCopy;
+    }
+
 }
 
 export { SunOrbit, EarthOrbit, MoonOrbit };

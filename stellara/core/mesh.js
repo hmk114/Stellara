@@ -1,5 +1,8 @@
-import { BufferGeometry, Float32BufferAttribute, Vector3, Matrix3, TextureLoader, MeshBasicMaterial } from 'three';
+'use strict';
+
+import { BufferGeometry, Float32BufferAttribute, Vector3, Matrix3, TextureLoader, Color, MeshStandardMaterial, ShaderLib, UniformsUtils } from 'three';
 import { radii } from './solar_system_data.js';
+import { vertexShaderPatcher, fragmentShaderPatcher } from './shader_patcher.js';
 
 class CelestialObjectGeometry extends BufferGeometry {
     constructor(radius = 1, transform = new Matrix3(), phiStart = 0, widthSegments = 32, heightSegments = 32) {
@@ -102,64 +105,93 @@ class CelestialObjectGeometry extends BufferGeometry {
     }
 }
 
-class GeometryCreator {
-    create() {
-        throw new Error("create() must be implemented by subclass.");
+function CreateSunGeometry() {
+    return new CelestialObjectGeometry(radii.sun);
+}
+
+function CreateEarthGeometry() {
+    const obliquity = 23.439281 * Math.PI / 180;
+    return new CelestialObjectGeometry(radii.earth, new Matrix3(
+        1.0, 0.0, 0.0,
+        0.0, Math.cos(obliquity), Math.sin(obliquity),
+        0.0, -Math.sin(obliquity), Math.cos(obliquity)
+    ), 0.0047 * 2 * Math.PI, 128, 128);
+}
+
+function CreateMoonGeometry() {
+    return new CelestialObjectGeometry(radii.moon);
+}
+
+class MeshStandardMaterialPatched extends MeshStandardMaterial {
+    #maxNumOpaqueObjectsInScene;
+
+    constructor(parameters, maxNumOpaqueObjectsInScene = 0) {
+        super(parameters);
+        this.#maxNumOpaqueObjectsInScene = maxNumOpaqueObjectsInScene;
+
+        const shader = ShaderLib["physical"];
+
+        // Redefine material's type to avoid using the original shader
+        this.type = 'MeshStandardMaterialPatched';
+        this.defines = { ...this.defines, MAX_NUM_OPAQUE_OBJECTS_IN_SCENE: maxNumOpaqueObjectsInScene };
+        this.vertexShader = vertexShaderPatcher(shader.vertexShader);
+        this.fragmentShader = fragmentShaderPatcher(shader.fragmentShader);
+        this.uniforms = UniformsUtils.merge([
+            shader.uniforms,
+            maxNumOpaqueObjectsInScene > 0 ? {
+                opaqueObjectPositions: { value: new Array(maxNumOpaqueObjectsInScene).fill(new Vector3()) },
+                opaqueObjectRadius: { value: new Array(maxNumOpaqueObjectsInScene).fill(0) },
+                numOpaqueObjectsInScene: { value: 0 }
+            } : {}
+        ]);
+    }
+
+    updateShadowUniforms(opaqueObjects) {
+        if (this.#maxNumOpaqueObjectsInScene === 0) return;
+
+        this.uniforms.numOpaqueObjectsInScene.value = opaqueObjects.length;
+        for (let i = 0; i < this.#maxNumOpaqueObjectsInScene; i++) {
+            if (i < opaqueObjects.length) {
+                this.uniforms.opaqueObjectPositions.value[i] = opaqueObjects[i].position;
+                this.uniforms.opaqueObjectRadius.value[i] = opaqueObjects[i].radius;
+            } else {
+                this.uniforms.opaqueObjectPositions.value[i] = new Vector3();
+                this.uniforms.opaqueObjectRadius.value[i] = 0;
+            }
+        }
     }
 }
 
-class SunGeometryCreator extends GeometryCreator {
-    constructor() {
-        super();
-    }
-
-    create() {
-        return new CelestialObjectGeometry(radii.sun);
-    }
+function CreateSunMaterials() {
+    return [
+        new MeshStandardMaterial({
+            map: new TextureLoader().load('stellara/assets/texture/sun.jpg'),
+            emissive: new Color(0xd3480a),
+            emissiveIntensity: 1
+        })
+    ];
 }
 
-class EarthGeometryCreator extends GeometryCreator {
-    constructor() {
-        super();
-    }
-
-    create() {
-        const obliquity = 23.439281 * Math.PI / 180;
-        return new CelestialObjectGeometry(radii.earth, new Matrix3(
-            1.0, 0.0, 0.0,
-            0.0, Math.cos(obliquity), Math.sin(obliquity),
-            0.0, -Math.sin(obliquity), Math.cos(obliquity)
-        ), 0.0047 * 2 * Math.PI);
-    }
-}
-
-class MoonGeometryCreator extends GeometryCreator {
-    constructor() {
-        super();
-    }
-
-    create() {
-        return new CelestialObjectGeometry(radii.moon);
-    }
-}
-
-class MaterialCreator {
-    constructor(texturePath) {
-        this.texturePath = texturePath;
-    }
-
-    create() {
-        const texture = new TextureLoader();
-        const material = new MeshBasicMaterial({ map: texture });
-        texture.load(
-            this.texturePath,
-            (texture) => {
-                material.map = texture;
-                material.needsUpdate = true;
-            },
+function CreateEarthMaterials(maxNumOpaqueObjectsInScene = 0) {
+    return [
+        new MeshStandardMaterialPatched(
+            { map: new TextureLoader().load('stellara/assets/texture/earth.jpg') },
+            maxNumOpaqueObjectsInScene
+        ),
+        new MeshStandardMaterialPatched(
+            { map: new TextureLoader().load('stellara/assets/texture/earth_water.jpg') },
+            maxNumOpaqueObjectsInScene
         )
-        return material;
-    }
+    ];
 }
 
-export { SunGeometryCreator, EarthGeometryCreator, MoonGeometryCreator, MaterialCreator };
+function CreateMoonMaterials(maxNumOpaqueObjectsInScene = 0) {
+    return [
+        new MeshStandardMaterialPatched(
+            { map: new TextureLoader().load('stellara/assets/texture/moon.jpg') },
+            maxNumOpaqueObjectsInScene
+        )
+    ];
+}
+
+export { CreateSunGeometry, CreateEarthGeometry, CreateMoonGeometry, CreateSunMaterials, CreateEarthMaterials, CreateMoonMaterials };

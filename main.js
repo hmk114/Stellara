@@ -1,9 +1,7 @@
+'use strict';
+
 import Application from './stellara/core/app.js';
-import { CelestialObject } from './stellara/core/celestial_object.js';
-import * as Orbit from './stellara/core/orbit.js';
-import * as Rotation from './stellara/core/rotation.js';
-import * as Meshes from './stellara/core/mesh.js';
-import { Mesh } from 'three';
+import solarSystemObjects from './stellara/core/solar_system_objects.js';
 
 class EventBus {
     constructor() {
@@ -38,9 +36,6 @@ class EventBus {
 }
 
 const eventBus = new EventBus();
-const moon = new CelestialObject("Moon", [], new Orbit.MoonOrbit(), new Rotation.MoonRotation(), new Meshes.MoonGeometryCreator(), new Meshes.MaterialCreator('stellara/assets/texture/moon.jpg'));
-const earth = new CelestialObject("Earth", [moon], new Orbit.EarthOrbit(), new Rotation.EarthRotation(), new Meshes.EarthGeometryCreator(), new Meshes.MaterialCreator('stellara/assets/texture/earth.jpg'));
-const sun = new CelestialObject("Sun", [earth], new Orbit.SunOrbit(), new Rotation.SunRotation(), new Meshes.SunGeometryCreator(), new Meshes.MaterialCreator('stellara/assets/texture/sun.jpg'));
-const app = new Application([sun, earth, moon]);
+const app = new Application(solarSystemObjects);
 
 app.animate();
