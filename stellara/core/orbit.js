@@ -1,3 +1,5 @@
+'use strict';
+
 import { KM_PER_AU } from "./constants.js";
 import { Vector3 } from "three";
 import { vsop87_data } from "./solar_system_data.js";
