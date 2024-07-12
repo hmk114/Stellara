@@ -9,12 +9,15 @@ class Application {
     #camera;
     #renderer;
     #controls;
+    #raycaster;
 
     #celestialObjects;
 
     #currentTime;
     #timeSpeed;
     #lastRenderTime;
+
+    #centerObject;
 
     constructor(celestialObjects = []) {
         this.#scene = new THREE.Scene();
@@ -25,7 +28,8 @@ class Application {
         this.#renderer.shadowMap.autoUpdate = true;
         this.#renderer.shadowMap.needsUpdate = true;
         this.#renderer.shadowMap.type = THREE.PCFSoftShadowMap;
-        
+
+        this.#raycaster = new THREE.Raycaster();
 
         this.#celestialObjects = celestialObjects;
         for (const obj of this.#celestialObjects) {
@@ -33,26 +37,7 @@ class Application {
             obj.showRotationAxis = true;
         }
 
-        // test
-        // const geometry = new THREE.SphereGeometry(0.005, 32, 32);
-        // const meshz = new THREE.Mesh(geometry, new THREE.MeshStandardMaterial({ color: 0x0000ff }));
-        // meshz.position.set(0, 0, 0.01);
-        // meshz.castShadow = true;
-        // meshz.receiveShadow = true;
-        // this.scene.add(meshz);
-
-        // let meshz_shadow = new ShadowMesh(meshz);
-        // this.scene.add(meshz_shadow);
-
-        // const geometry1 = new THREE.SphereGeometry(0.005, 32, 32);
-        // const meshz1 = new THREE.Mesh(geometry1, new THREE.MeshStandardMaterial({ color: 0x0000ff }));
-        // meshz1.position.set(0, 0, 0.025);
-        // meshz1.castShadow = true;
-        // meshz1.receiveShadow = true;
-        // this.scene.add(meshz1);
-
-        // let meshz_shadow1 = new ShadowMesh(meshz1);
-        // this.scene.add(meshz_shadow1);
+        this.#centerObject = this.#celestialObjects[0].selectMesh;
 
         // light
         const ambientLight = new THREE.AmbientLight(0x404040, 1.5);
@@ -97,6 +82,18 @@ class Application {
             this.#camera.updateProjectionMatrix();
             this.#renderer.setSize(window.innerWidth, window.innerHeight);
         });
+
+        window.addEventListener('click', e => {
+            const mouse = new THREE.Vector2(
+                (e.clientX / window.innerWidth) * 2 - 1,
+                - (e.clientY / window.innerHeight) * 2 + 1
+            );
+            this.#raycaster.setFromCamera(mouse, this.#camera);
+            const intersects = this.#raycaster.intersectObjects(this.#celestialObjects.map(obj => obj.selectMesh));
+            if (intersects.length > 0) {
+                this.#centerObject = intersects[0].object;
+            }
+        });
     }
 
     animate() {
@@ -113,10 +110,7 @@ class Application {
         // Note: You can use the following code to switch the texture of the Earth object.
             // this.celestialObjects[1].switchTexture(1);
 
-        
-        // Note: You can use the following code to switch the focus of the camera to the Earth object.
-        // 0: Sun, 1: Earth, 2: Moon
-        this.#controls.target = this.#celestialObjects[1].position;
+        this.#controls.target = this.#centerObject.position;
         this.#controls.trackTarget();
         this.#controls.update();
 
