@@ -24,6 +24,7 @@ class CelestialObject {
     #mesh;
     #axisMesh;
     #orbitMesh;
+    #selectMesh; // a large invisible mesh for easier selection
     #meshGroup;
 
     constructor(name, children, orbit, rotation, geometry, materials, orbitMaterial, curMaterialIndex = 0, castShadow = true, receiveShadow = true) {
@@ -65,6 +66,7 @@ class CelestialObject {
         }
 
         this.#orbitMesh = new THREE.Line(new THREE.BufferGeometry(), this.#orbitMaterial);
+        this.#selectMesh = new THREE.Mesh(this.#geometry, new THREE.MeshBasicMaterial({ opacity: 0.0, transparent: true }));
     }
 
     #updateMeshGroup() {
@@ -83,6 +85,7 @@ class CelestialObject {
         updateMesh(this.#mesh, this.#visible);
         updateMesh(this.#axisMesh, this.#visible && this.#showRotationAxis);
         updateMesh(this.#orbitMesh, this.#visible && this.#showOrbit);
+        updateMesh(this.#selectMesh, true);
     }
 
     /**
@@ -134,6 +137,10 @@ class CelestialObject {
         return this.#meshGroup;
     }
 
+    get selectMesh() {
+        return this.#selectMesh;
+    }
+
     get position() {
         return this.#mesh.position.clone();
     }
@@ -168,10 +175,9 @@ class CelestialObject {
         const [x, y, z] = [position.x + baseX, position.y + baseY, position.z + baseZ];
         this.#mesh.position.set(x, y, z);
         this.#axisMesh.position.set(x, y, z);
+        this.#selectMesh.position.set(x, y, z);
 
-        // TODO: move into meshGroup
         // update orbit
-
         const orbitPoints = this.#orbit.orbitCurve(jd);
         if (orbitPoints.length !== 0) {
             for (let i = 0; i < orbitPoints.length; i++) {
@@ -191,8 +197,10 @@ class CelestialObject {
         const minAngularRadius = 0.002;
         const dis = camera.position.distanceTo(this.#mesh.position);
         const realAngularRadius = Math.atan(this.radius / dis);
+        const scale = Math.max(minAngularRadius / realAngularRadius, 1);
 
-        this.#mesh.scale.setScalar(Math.max(minAngularRadius / realAngularRadius, 1));
+        this.#mesh.scale.setScalar(scale);
+        this.#selectMesh.scale.setScalar(scale * 10);
 
         for (const child of this.#children) {
             child.updatePosition(scene, camera, jd, [x, y, z]);
