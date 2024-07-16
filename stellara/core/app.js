@@ -38,6 +38,7 @@ class Application {
             obj.showRotationAxis = true;
         }
 
+        // 切换主题
         this.#centerObject = this.#celestialObjects[0].selectMesh;
 
         // light
@@ -99,13 +100,7 @@ class Application {
         // eventBus
         eventBus.subscribe('EarthTransformation', () => {
             this.#celestialObjects[1].switchTexture(this.#celestialObjects[1].curMaterialIndex ^ 1);
-            console.log("Camera Position:", this.#camera.position);
-            console.log("Camera Rotation:", this.#camera.rotation);
-            console.log("Camera Up Vector:", this.#camera.up);
-            console.log("Camera Field of View (FOV):", this.#camera.fov);
-            console.log("Camera Aspect Ratio:", this.#camera.aspect);
-            console.log("Camera Near Clipping Plane:", this.#camera.near);
-            console.log("Camera Far Clipping Plane:", this.#camera.far);
+            this.#centerObject = this.#celestialObjects[1].selectMesh;
         });
 
         eventBus.subscribe('ViewSwitching', () => {
@@ -126,7 +121,6 @@ class Application {
         this.#celestialObjects[1].updatePosition(this.#scene, this.#camera, jd, [0, 0, 0]);
 
         // Note: You can use the following code to switch the texture of the Earth object.
-            // this.celestialObjects[1].switchTexture(1);
 
         this.#controls.target = this.#centerObject.position;
         this.#controls.trackTarget();
