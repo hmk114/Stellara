@@ -12,7 +12,7 @@ class CelestialObject {
     #geometry;
     #materials;
     #orbitMaterial;
-    #curMaterialIndex;
+    curMaterialIndex;
 
     #visible;
     #showOrbit;
@@ -37,7 +37,7 @@ class CelestialObject {
         this.#geometry = geometry;
         this.#materials = materials;
         this.#orbitMaterial = orbitMaterial;
-        this.#curMaterialIndex = curMaterialIndex;
+        this.curMaterialIndex = curMaterialIndex;
 
         this.#visible = true;
         this.#showOrbit = true;
@@ -54,7 +54,7 @@ class CelestialObject {
     }
 
     #createMeshes() {
-        this.#mesh = new THREE.Mesh(this.#geometry, this.#materials[this.#curMaterialIndex]);
+        this.#mesh = new THREE.Mesh(this.#geometry, this.#materials[this.curMaterialIndex]);
 
         if (this.#rotation) {
             const delta = this.#rotation.getRotationAxis().multiplyScalar(this.#geometry.parameters.radius * 2);
@@ -222,7 +222,7 @@ class CelestialObject {
             return;
         }
 
-        this.#curMaterialIndex = index;
+        this.curMaterialIndex = index;
         this.#mesh.material = this.#materials[index];
     }
 }

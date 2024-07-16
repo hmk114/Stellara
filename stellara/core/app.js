@@ -19,7 +19,8 @@ class Application {
 
     #centerObject;
 
-    constructor(celestialObjects = []) {
+    constructor(celestialObjects = [], eventBus) {
+
         this.#scene = new THREE.Scene();
         this.#camera = new THREE.PerspectiveCamera(50, window.innerWidth / window.innerHeight, 0.00001, 100);
         this.#renderer = new THREE.WebGLRenderer({ antialias: true });
@@ -94,6 +95,23 @@ class Application {
                 this.#centerObject = intersects[0].object;
             }
         });
+
+        // eventBus
+        eventBus.subscribe('EarthTransformation', () => {
+            this.#celestialObjects[1].switchTexture(this.#celestialObjects[1].curMaterialIndex ^ 1);
+            console.log("Camera Position:", this.#camera.position);
+            console.log("Camera Rotation:", this.#camera.rotation);
+            console.log("Camera Up Vector:", this.#camera.up);
+            console.log("Camera Field of View (FOV):", this.#camera.fov);
+            console.log("Camera Aspect Ratio:", this.#camera.aspect);
+            console.log("Camera Near Clipping Plane:", this.#camera.near);
+            console.log("Camera Far Clipping Plane:", this.#camera.far);
+        });
+
+        eventBus.subscribe('ViewSwitching', () => {
+            this.#camera.position.set(0, 0, 1);
+        });
+
     }
 
     animate() {
@@ -105,7 +123,7 @@ class Application {
         this.#lastRenderTime = new Date();
 
         const jd = convertToJulianDate(this.#currentTime);
-        this.#celestialObjects[0].updatePosition(this.#scene, this.#camera, jd, [0, 0, 0]);
+        this.#celestialObjects[1].updatePosition(this.#scene, this.#camera, jd, [0, 0, 0]);
 
         // Note: You can use the following code to switch the texture of the Earth object.
             // this.celestialObjects[1].switchTexture(1);
@@ -115,7 +133,6 @@ class Application {
         this.#controls.update();
 
         this.#updateShadow();
-
         this.#renderer.render(this.#scene, this.#camera);
     }
 

@@ -34,8 +34,8 @@ class EventBus {
         this.publishedEvents[eventName].push(callback);
     }
 }
-
+document.getElementById("EarthTransformation").addEventListener('click', () => eventBus.publish('EarthTransformation'));
+document.getElementById("ViewSwitching").addEventListener('click', () => eventBus.publish('ViewSwitching'));
 const eventBus = new EventBus();
-const app = new Application(solarSystemObjects);
-
+const app = new Application(solarSystemObjects, eventBus);
 app.animate();
