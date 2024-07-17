@@ -4,6 +4,9 @@ import * as THREE from 'three';
 import { OrbitControls } from 'three/addons/controls/OrbitControls.js';
 import { convertToJulianDate } from './time.js';
 
+// init number : 86400
+let initTimeSpeed = 8640;
+
 class Application {
     #scene;
     #camera;
@@ -74,7 +77,7 @@ class Application {
 
         // this.currentTime = new Date();
         this.#currentTime = new Date("2024-10-03 02:30:00");
-        this.#timeSpeed = 86400; 
+        this.#timeSpeed = initTimeSpeed; 
         this.#lastRenderTime = null;
 
         document.body.appendChild(this.#renderer.domElement);
@@ -107,6 +110,19 @@ class Application {
             this.#camera.position.set(0, 0, 1);
         });
 
+        eventBus.subscribe('TimeSelection', selectedTime => {
+            let t = selectedTime.split('T');
+            let tt = t[0] + ' ' + t[1] + ':00';
+            this.#currentTime = new Date(tt);
+        });
+
+        eventBus.subscribe('Stop', () => {
+            if(this.#timeSpeed === 0) {
+                this.#timeSpeed = initTimeSpeed;
+            } else {
+                this.#timeSpeed = 0;
+            }
+        });
     }
 
     animate() {
