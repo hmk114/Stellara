@@ -39,10 +39,13 @@ document.getElementById("ViewSwitching").addEventListener('click', () => eventBu
 document.getElementById("TimeSelection").addEventListener('change', () => eventBus.publish('TimeSelection', document.getElementById("TimeSelection").value));
 document.getElementById("Stop").addEventListener('click', () => eventBus.publish('Stop'));
 document.getElementById("popwindow").addEventListener('click', () =>{
-    const url = 'https://ssd.jpl.nasa.gov/tools/orbit_viewer.html'; 
+    const url = './stellara/Page/SolarEclipse.html'; 
     const windowName = 'popupWindow';
     const windowFeatures = 'width=600,height=400,left=100,top=100';
-    window.open(url, windowName, windowFeatures);
+    const window1 = window.open(url, windowName, windowFeatures);
+    setTimeout(() => {
+        if(window1) window1.close();
+    }, 50000);
 });
 const eventBus = new EventBus();
 const app = new Application(solarSystemObjects, eventBus);

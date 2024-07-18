@@ -22,7 +22,7 @@ class Application {
 
     #centerObject;
 
-    constructor(celestialObjects = [], eventBus) {
+    constructor(celestialObjects = [], eventBus, type = 0) {
 
         this.#scene = new THREE.Scene();
         this.#camera = new THREE.PerspectiveCamera(50, window.innerWidth / window.innerHeight, 0.00001, 100);
@@ -104,6 +104,7 @@ class Application {
         eventBus.subscribe('EarthTransformation', () => {
             this.#celestialObjects[1].switchTexture(this.#celestialObjects[1].curMaterialIndex ^ 1);
             this.#centerObject = this.#celestialObjects[1].selectMesh;
+            console.log(this.#camera)
         });
 
         eventBus.subscribe('ViewSwitching', () => {
@@ -123,6 +124,13 @@ class Application {
                 this.#timeSpeed = 0;
             }
         });
+
+        //type = 1 : Solar Eclipse
+        if(type === 1) {
+            this.#celestialObjects[1].switchTexture(0);
+            console.log(this.#celestialObjects);
+            this.#centerObject = this.#celestialObjects[1].selectMesh;            
+        }
     }
 
     animate() {
