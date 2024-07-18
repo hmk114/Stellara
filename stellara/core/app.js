@@ -41,6 +41,15 @@ class Application {
             obj.showRotationAxis = true;
         }
 
+        if(type === 1)
+            {
+                const container = document.getElementById('container');
+                this.#renderer.setSize(container.clientWidth, container.clientHeight);
+                container.appendChild(this.#renderer.domElement);
+                this.#camera.aspect = container.clientWidth / container.clientHeight;
+                this.#camera.updateProjectionMatrix();
+            }
+
         // 切换主题
         this.#centerObject = this.#celestialObjects[0].selectMesh;
 
@@ -80,12 +89,19 @@ class Application {
         this.#timeSpeed = initTimeSpeed; 
         this.#lastRenderTime = null;
 
-        document.body.appendChild(this.#renderer.domElement);
+        if(type === 0)document.body.appendChild(this.#renderer.domElement);
 
         window.addEventListener('resize', () => {
             this.#camera.aspect = window.innerWidth / window.innerHeight;
             this.#camera.updateProjectionMatrix();
             this.#renderer.setSize(window.innerWidth, window.innerHeight);
+            if(type === 1)
+            {
+                const container = document.getElementById('container');
+                this.#renderer.setSize(container.clientWidth, container.clientHeight);
+                this.#camera.aspect = container.clientWidth / container.clientHeight;
+                this.#camera.updateProjectionMatrix();
+            }
         });
 
         window.addEventListener('click', e => {
@@ -125,12 +141,9 @@ class Application {
             }
         });
 
-        //type = 1 : Solar Eclipse
-        if(type === 1) {
-            this.#celestialObjects[1].switchTexture(0);
-            console.log(this.#celestialObjects);
-            this.#centerObject = this.#celestialObjects[1].selectMesh;            
-        }
+        eventBus.subscribe('popwindow', () => {
+            
+        });
     }
 
     animate() {

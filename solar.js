@@ -35,14 +35,6 @@ class EventBus {
     }
 }
 
-document.getElementById("EarthTransformation").addEventListener('click', () => eventBus.publish('EarthTransformation'));
-document.getElementById("ViewSwitching").addEventListener('click', () => eventBus.publish('ViewSwitching'));
-document.getElementById("TimeSelection").addEventListener('change', () => eventBus.publish('TimeSelection', document.getElementById("TimeSelection").value));
-document.getElementById("Stop").addEventListener('click', () => eventBus.publish('Stop'));
-document.getElementById("popwindow").addEventListener('click', () =>{
-    eventBus.publish('popwindow');
-});
-
 const eventBus = new EventBus();
-const app = new Application(solarSystemObjects, eventBus);
+const app = new Application(solarSystemObjects, eventBus, 1);
 app.animate();
