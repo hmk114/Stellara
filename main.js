@@ -36,7 +36,12 @@ class EventBus {
 }
 
 document.getElementById("EarthTransformation").addEventListener('click', () => eventBus.publish('EarthTransformation'));
-document.getElementById("ViewSwitching").addEventListener('click', () => eventBus.publish('ViewSwitching'));
+document.getElementById("ViewSwitchingEarth").addEventListener('click', () => eventBus.publish('ViewSwitchingEarth'));
+document.getElementById("ViewSwitchingSun").addEventListener('click', () => eventBus.publish('ViewSwitchingSun'));
+document.getElementById("ViewSwitchingMoon").addEventListener('click', () => eventBus.publish('ViewSwitchingMoon'));
+document.getElementById("topView").addEventListener('click', () => eventBus.publish('topView'));
+document.getElementById("sideView").addEventListener('click', () => eventBus.publish('sideView'));
+document.getElementById("3DView").addEventListener('click', () => eventBus.publish('3DView'));
 document.getElementById("TimeSelection").addEventListener('change', () => eventBus.publish('TimeSelection', document.getElementById("TimeSelection").value));
 document.getElementById("Stop").addEventListener('click', () => eventBus.publish('Stop'));
 document.getElementById("popwindow").addEventListener('click', () =>{

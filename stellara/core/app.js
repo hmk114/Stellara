@@ -123,10 +123,6 @@ class Application {
             console.log(this.#camera)
         });
 
-        eventBus.subscribe('ViewSwitching', () => {
-            this.#camera.position.set(0, 0, 1);
-        });
-
         eventBus.subscribe('TimeSelection', selectedTime => {
             let t = selectedTime.split('T');
             let tt = t[0] + ' ' + t[1] + ':00';
@@ -139,6 +135,30 @@ class Application {
             } else {
                 this.#timeSpeed = 0;
             }
+        });
+
+        eventBus.subscribe('topView', () => {
+            this.#camera.position.set(0, 0, 2.5);
+        });
+
+        eventBus.subscribe('sideView', () => {
+            this.#camera.position.set(2, 0, 0.1);
+        });
+
+        eventBus.subscribe('3DView', () => {
+            this.#camera.position.set(1.5, 1.5, 1.5);
+        });
+
+        eventBus.subscribe('ViewSwitchingEarth', () => {
+            this.#centerObject = this.#celestialObjects[1].selectMesh;
+        });
+
+        eventBus.subscribe('ViewSwitchingSun', () => {
+            this.#centerObject = this.#celestialObjects[0].selectMesh;
+        });
+
+        eventBus.subscribe('ViewSwitchingMoon', () => {
+            this.#centerObject = this.#celestialObjects[2].selectMesh;
         });
 
         eventBus.subscribe('popwindow', () => {
