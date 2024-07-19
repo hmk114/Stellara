@@ -35,14 +35,18 @@ class EventBus {
     }
 }
 
+
 document.getElementById("EarthTransformation").addEventListener('click', () => eventBus.publish('EarthTransformation'));
-document.getElementById("ViewSwitchingEarth").addEventListener('click', () => eventBus.publish('ViewSwitchingEarth'));
-document.getElementById("ViewSwitchingSun").addEventListener('click', () => eventBus.publish('ViewSwitchingSun'));
-document.getElementById("ViewSwitchingMoon").addEventListener('click', () => eventBus.publish('ViewSwitchingMoon'));
+document.getElementById("TimeSelection").addEventListener('change', () => eventBus.publish('TimeSelection', document.getElementById("TimeSelection").value));
 document.getElementById("topView").addEventListener('click', () => eventBus.publish('topView'));
 document.getElementById("sideView").addEventListener('click', () => eventBus.publish('sideView'));
 document.getElementById("3DView").addEventListener('click', () => eventBus.publish('3DView'));
-document.getElementById("TimeSelection").addEventListener('change', () => eventBus.publish('TimeSelection', document.getElementById("TimeSelection").value));
+document.getElementById("ViewSwitchingSun").addEventListener('click', () => eventBus.publish('ViewSwitchingSun'));
+document.getElementById("ViewSwitchingEarth").addEventListener('click', () => eventBus.publish('ViewSwitchingEarth'));
+document.getElementById("ViewSwitchingMoon").addEventListener('click', () => eventBus.publish('ViewSwitchingMoon'));
+document.getElementById("HalfSpeed").addEventListener('click', () => eventBus.publish('HalfSpeed'));
+document.getElementById("TwotimesSpeed").addEventListener('click', () => eventBus.publish('TwotimesSpeed'));
+document.getElementById("ReturnSpeed").addEventListener('click', () => eventBus.publish('ReturnSpeed'));
 document.getElementById("Stop").addEventListener('click', () => eventBus.publish('Stop'));
 document.getElementById("popwindow").addEventListener('click', () =>{
     eventBus.publish('popwindow');

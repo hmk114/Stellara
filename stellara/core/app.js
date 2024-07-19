@@ -155,13 +155,17 @@ class Application {
             this.#currentTime = new Date(tt);
             this.#lastRenderTime = null;
         });
+        
+        eventBus.subscribe('ViewSwitchingSun', () => {
+            this.#centerObject = this.#celestialObjects[0].selectMesh;
+        });
 
-        eventBus.subscribe('Stop', () => {
-            if (this.#timeSpeed === 0) {
-                this.#timeSpeed = initTimeSpeed;
-            } else {
-                this.#timeSpeed = 0;
-            }
+        eventBus.subscribe('ViewSwitchingEarth', () => {
+            this.#centerObject = this.#celestialObjects[1].selectMesh;
+        });
+
+        eventBus.subscribe('ViewSwitchingMoon', () => {
+            this.#centerObject = this.#celestialObjects[2].selectMesh;
         });
 
         eventBus.subscribe('topView', () => {
@@ -176,16 +180,21 @@ class Application {
             this.#camera.position.set(1.5, 1.5, 1.5);
         });
 
-        eventBus.subscribe('ViewSwitchingEarth', () => {
-            this.#centerObject = this.#celestialObjects[1].selectMesh;
+        eventBus.subscribe('TwotimesSpeed', () => {
+            this.#timeSpeed *= 2;
         });
 
-        eventBus.subscribe('ViewSwitchingSun', () => {
-            this.#centerObject = this.#celestialObjects[0].selectMesh;
+        eventBus.subscribe('HalfSpeed', () => {
+            this.#timeSpeed *= 0.5;
         });
 
-        eventBus.subscribe('ViewSwitchingMoon', () => {
-            this.#centerObject = this.#celestialObjects[2].selectMesh;
+        eventBus.subscribe('ReturnSpeed', () => {
+            console.log('ReturnSpeed');
+            this.#timeSpeed = initTimeSpeed;
+        });
+
+        eventBus.subscribe('Stop', () => {
+            this.#timeSpeed = 0;
         });
 
         eventBus.subscribe('popwindow', () => {
