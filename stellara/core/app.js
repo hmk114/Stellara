@@ -4,11 +4,15 @@ import * as THREE from 'three';
 import { OrbitControls } from 'three/addons/controls/OrbitControls.js';
 import { convertToJulianDate } from './time.js';
 
+// init number : 86400
+let initTimeSpeed = 8640;
+
 class Application {
     #scene;
     #camera;
     #renderer;
     #controls;
+    #raycaster;
 
     #celestialObjects;
 
@@ -16,7 +20,10 @@ class Application {
     #timeSpeed;
     #lastRenderTime;
 
-    constructor(celestialObjects = []) {
+    #centerObject;
+
+    constructor(celestialObjects = [], eventBus, type = 0) {
+
         this.#scene = new THREE.Scene();
         this.#camera = new THREE.PerspectiveCamera(50, window.innerWidth / window.innerHeight, 0.00001, 100);
         this.#renderer = new THREE.WebGLRenderer({ antialias: true });
@@ -25,7 +32,8 @@ class Application {
         this.#renderer.shadowMap.autoUpdate = true;
         this.#renderer.shadowMap.needsUpdate = true;
         this.#renderer.shadowMap.type = THREE.PCFSoftShadowMap;
-        
+
+        this.#raycaster = new THREE.Raycaster();
 
         this.#celestialObjects = celestialObjects;
         for (const obj of this.#celestialObjects) {
@@ -33,26 +41,17 @@ class Application {
             obj.showRotationAxis = true;
         }
 
-        // test
-        // const geometry = new THREE.SphereGeometry(0.005, 32, 32);
-        // const meshz = new THREE.Mesh(geometry, new THREE.MeshStandardMaterial({ color: 0x0000ff }));
-        // meshz.position.set(0, 0, 0.01);
-        // meshz.castShadow = true;
-        // meshz.receiveShadow = true;
-        // this.scene.add(meshz);
+        if(type === 1)
+            {
+                const container = document.getElementById('container');
+                this.#renderer.setSize(container.clientWidth, container.clientHeight);
+                container.appendChild(this.#renderer.domElement);
+                this.#camera.aspect = container.clientWidth / container.clientHeight;
+                this.#camera.updateProjectionMatrix();
+            }
 
-        // let meshz_shadow = new ShadowMesh(meshz);
-        // this.scene.add(meshz_shadow);
-
-        // const geometry1 = new THREE.SphereGeometry(0.005, 32, 32);
-        // const meshz1 = new THREE.Mesh(geometry1, new THREE.MeshStandardMaterial({ color: 0x0000ff }));
-        // meshz1.position.set(0, 0, 0.025);
-        // meshz1.castShadow = true;
-        // meshz1.receiveShadow = true;
-        // this.scene.add(meshz1);
-
-        // let meshz_shadow1 = new ShadowMesh(meshz1);
-        // this.scene.add(meshz_shadow1);
+        // 切换主题
+        this.#centerObject = this.#celestialObjects[0].selectMesh;
 
         // light
         const ambientLight = new THREE.AmbientLight(0x404040, 1.5);
@@ -87,15 +86,83 @@ class Application {
 
         // this.currentTime = new Date();
         this.#currentTime = new Date("2024-10-03 02:30:00");
-        this.#timeSpeed = 86400; 
+        this.#timeSpeed = initTimeSpeed; 
         this.#lastRenderTime = null;
 
-        document.body.appendChild(this.#renderer.domElement);
+        if(type === 0)document.body.appendChild(this.#renderer.domElement);
 
         window.addEventListener('resize', () => {
             this.#camera.aspect = window.innerWidth / window.innerHeight;
             this.#camera.updateProjectionMatrix();
             this.#renderer.setSize(window.innerWidth, window.innerHeight);
+            if(type === 1)
+            {
+                const container = document.getElementById('container');
+                this.#renderer.setSize(container.clientWidth, container.clientHeight);
+                this.#camera.aspect = container.clientWidth / container.clientHeight;
+                this.#camera.updateProjectionMatrix();
+            }
+        });
+
+        window.addEventListener('click', e => {
+            const mouse = new THREE.Vector2(
+                (e.clientX / window.innerWidth) * 2 - 1,
+                - (e.clientY / window.innerHeight) * 2 + 1
+            );
+            this.#raycaster.setFromCamera(mouse, this.#camera);
+            const intersects = this.#raycaster.intersectObjects(this.#celestialObjects.map(obj => obj.selectMesh));
+            if (intersects.length > 0) {
+                this.#centerObject = intersects[0].object;
+            }
+        });
+
+        // eventBus
+        eventBus.subscribe('EarthTransformation', () => {
+            this.#celestialObjects[1].switchTexture(this.#celestialObjects[1].curMaterialIndex ^ 1);
+            this.#centerObject = this.#celestialObjects[1].selectMesh;
+            console.log(this.#camera)
+        });
+
+        eventBus.subscribe('TimeSelection', selectedTime => {
+            let t = selectedTime.split('T');
+            let tt = t[0] + ' ' + t[1] + ':00';
+            this.#currentTime = new Date(tt);
+        });
+
+        eventBus.subscribe('Stop', () => {
+            if(this.#timeSpeed === 0) {
+                this.#timeSpeed = initTimeSpeed;
+            } else {
+                this.#timeSpeed = 0;
+            }
+        });
+
+        eventBus.subscribe('topView', () => {
+            this.#camera.position.set(0, 0, 2.5);
+        });
+
+        eventBus.subscribe('sideView', () => {
+            this.#camera.position.set(2, 0, 0.1);
+        });
+
+        eventBus.subscribe('3DView', () => {
+            this.#camera.position.set(1.5, 1.5, 1.5);
+        });
+
+        eventBus.subscribe('ViewSwitchingEarth', () => {
+            this.#centerObject = this.#celestialObjects[1].selectMesh;
+        });
+
+        eventBus.subscribe('ViewSwitchingSun', () => {
+            this.#centerObject = this.#celestialObjects[0].selectMesh;
+        });
+
+        eventBus.subscribe('ViewSwitchingMoon', () => {
+            this.#centerObject = this.#celestialObjects[2].selectMesh;
+        });
+
+        eventBus.subscribe('popwindow', () => {
+            
         });
     }
 
@@ -108,20 +175,15 @@ class Application {
         this.#lastRenderTime = new Date();
 
         const jd = convertToJulianDate(this.#currentTime);
-        this.#celestialObjects[0].updatePosition(this.#scene, this.#camera, jd, [0, 0, 0]);
+        this.#celestialObjects[1].updatePosition(this.#scene, this.#camera, jd, [0, 0, 0]);
 
         // Note: You can use the following code to switch the texture of the Earth object.
-            // this.celestialObjects[1].switchTexture(1);
 
-        
-        // Note: You can use the following code to switch the focus of the camera to the Earth object.
-        // 0: Sun, 1: Earth, 2: Moon
-        this.#controls.target = this.#celestialObjects[1].position;
+        this.#controls.target = this.#centerObject.position;
         this.#controls.trackTarget();
         this.#controls.update();
 
         this.#updateShadow();
-
         this.#renderer.render(this.#scene, this.#camera);
     }
 

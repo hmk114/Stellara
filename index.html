@@ -5,9 +5,78 @@
 		<title>My first three.js app</title>
 		<style>
 			body { margin: 0; }
+            .dropdown {
+                position: relative;
+                display: inline-block;
+            }
+    
+            /* 下拉菜单内容样式 */
+            .dropdown-content {
+                display: none;
+                position: absolute;
+                background-color: #f9f9f9;
+                min-width: 160px;
+                box-shadow: 0px 8px 16px 0px rgba(0,0,0,0.2);
+                z-index: 1;
+            }
+    
+            /* 下拉菜单链接样式 */
+            .dropdown-content a {
+                color: black;
+                padding: 12px 16px;
+                text-decoration: none;
+                display: block;
+            }
+    
+            /* 鼠标悬停时链接的样式 */
+            .dropdown-content a:hover {
+                background-color: #f1f1f1;
+            }
+    
+            /* 显示下拉菜单 */
+            .dropdown:hover .dropdown-content {
+                display: block;
+            }
+    
+            /* 按钮悬停时的样式 */
+            .dropdown:hover .dropdown-button {
+                background-color: #3e8e41;
+            }
+
 		</style>
 	</head>
 	<body>
-		<script type="module" src="/main.js"></script>
+		<div style="position: absolute;">
+			<button id="EarthTransformation">地球换肤</button>
+            <div class="dropdown">
+                <button class="dropdown-button">视角切换</button>
+                <div class="dropdown-content">
+                    <a id="ViewSwitchingEarth">地球</a>
+                    <a id="ViewSwitchingMoon">月球</a>
+                    <a id="ViewSwitchingSun">太阳</a>
+                </div>
+            </div>
+            <div class="dropdown">
+                <button class="dropdown-button">视图切换</button>
+                <div class="dropdown-content">
+                    <a id="topView">俯视</a>
+                    <a id="sideView">侧视</a>
+                    <a id="3DView">3D模式</a>
+                </div>
+            </div>
+			<input 	type="datetime-local" 
+					value="2024-10-03T02:30"
+					id="TimeSelection"
+			/>
+			<button id="Stop">Stop</button>
+			<button id="popwindow">日食月食</button>
+		</div>
+		<div 
+			style="position: absolute; top: 0; right: 0; width: 500px; height: 300px; background-color:aliceblue; padding: 5px;"
+			id = "container"
+		>
+			<script type="module" src="/solar.js"></script>
+		</div>
+		<script type="module" src="/main.js"></script></div>
 	</body>
 </html>
