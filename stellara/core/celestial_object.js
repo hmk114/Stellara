@@ -199,8 +199,8 @@ class CelestialObject {
         const realAngularRadius = Math.atan(this.radius / dis);
         const scale = Math.max(minAngularRadius / realAngularRadius, 1);
 
-        this.#mesh.scale.setScalar(scale);
-        this.#selectMesh.scale.setScalar(scale * 10);
+        // this.#mesh.scale.setScalar(scale);
+        // this.#selectMesh.scale.setScalar(scale * 10);
 
         for (const child of this.#children) {
             child.updatePosition(scene, camera, jd, [x, y, z]);

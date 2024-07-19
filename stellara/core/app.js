@@ -6,6 +6,7 @@ import { convertToJulianDate } from './time.js';
 
 // init number : 86400
 let initTimeSpeed = 8640;
+let currentTimeSpeed = initTimeSpeed;
 
 class Application {
     #scene;
@@ -145,8 +146,6 @@ class Application {
         // eventBus
         eventBus.subscribe('EarthTransformation', () => {
             this.#celestialObjects[1].switchTexture(this.#celestialObjects[1].curMaterialIndex ^ 1);
-            this.#centerObject = this.#celestialObjects[1].selectMesh;
-            console.log(this.#camera)
         });
 
         eventBus.subscribe('TimeSelection', selectedTime => {
@@ -196,20 +195,28 @@ class Application {
         });
 
         eventBus.subscribe('TwotimesSpeed', () => {
-            this.#timeSpeed *= 2;
+            currentTimeSpeed *= 2;
+            this.#timeSpeed = currentTimeSpeed;
         });
 
         eventBus.subscribe('HalfSpeed', () => {
-            this.#timeSpeed *= 0.5;
+            currentTimeSpeed *= 0.5;
+            this.#timeSpeed = currentTimeSpeed;
         });
 
         eventBus.subscribe('ReturnSpeed', () => {
             console.log('ReturnSpeed');
             this.#timeSpeed = initTimeSpeed;
+            currentTimeSpeed = initTimeSpeed;
         });
 
         eventBus.subscribe('Stop', () => {
-            this.#timeSpeed = 0;
+            if(this.#timeSpeed === 0){
+                this.#timeSpeed = currentTimeSpeed;
+            }
+            else{
+                this.#timeSpeed = 0;
+            }
         });
 
         eventBus.subscribe('popwindow', () => {
@@ -225,6 +232,7 @@ class Application {
             document.getElementById("nowtime").innerText = this.#currentTime.toLocaleString();
         }
         this.#lastRenderTime = new Date();
+        document.getElementById('timespeed').innerText = 'Time Speed: *' + (currentTimeSpeed/initTimeSpeed >= 1 ? currentTimeSpeed/initTimeSpeed : '1/' + initTimeSpeed/currentTimeSpeed);
 
         const jd = convertToJulianDate(this.#currentTime);
         this.#celestialObjects[1].updatePosition(this.#scene, this.#camera, jd, [0, 0, 0]);
