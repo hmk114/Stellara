@@ -35,19 +35,6 @@ class EventBus {
     }
 }
 
-const viewSwitchingButtons = {
-    ViewSwitchingEarth: 'ViewSwitchingEarth',
-    ViewSwitchingSun: 'ViewSwitchingSun',
-    ViewSwitchingMoon: 'ViewSwitchingMoon'
-};
-
-const viewButtons = {
-    topView: 'topView',
-    sideView: 'sideView',
-    '3DView': '3DView'
-};
-
-
 const timeSpeedButtons = {
     FourtimesSpeed: 'FourtimesSpeed',
     TwotimesSpeed: 'TwotimesSpeed',
@@ -66,19 +53,23 @@ const speedTexts = {
 
 document.getElementById("EarthTransformation").addEventListener('click', () => eventBus.publish('EarthTransformation'));
 document.getElementById("TimeSelection").addEventListener('change', () => eventBus.publish('TimeSelection', document.getElementById("TimeSelection").value));
-Object.keys(viewSwitchingButtons).forEach(buttonId => {
-    document.getElementById(buttonId).addEventListener('click', () => eventBus.publish(viewSwitchingButtons[buttonId]));
-});
-Object.keys(viewButtons).forEach(buttonId => {
-    document.getElementById(buttonId).addEventListener('click', () => eventBus.publish(viewButtons[buttonId]));
-});
+document.getElementById("topView").addEventListener('click', () => eventBus.publish('topView'));
+document.getElementById("sideView").addEventListener('click', () => eventBus.publish('sideView'));
+document.getElementById("3DView").addEventListener('click', () => eventBus.publish('3DView'));
+document.getElementById("ViewSwitchingSun").addEventListener('click', () => eventBus.publish('ViewSwitchingSun'));
+document.getElementById("ViewSwitchingEarth").addEventListener('click', () => eventBus.publish('ViewSwitchingEarth'));
+document.getElementById("ViewSwitchingMoon").addEventListener('click', () => eventBus.publish('ViewSwitchingMoon'));
 Object.keys(timeSpeedButtons).forEach(buttonId => {
     const button = document.getElementById(buttonId);
     button.addEventListener('click', () => {
-        Object.keys(timeSpeedButtons).forEach(id => document.getElementById(id).classList.remove('active'));
-        button.classList.add('active');
-        document.getElementById('SpeedText').textContent = speedTexts[buttonId] || 'X1';
-        eventBus.publish(timeSpeedButtons[buttonId]);
+        if (button.classList.contains('active')) {
+            button.classList.remove('active');
+            eventBus.publish('Stop');
+        } else {
+            Object.keys(timeSpeedButtons).forEach(id => document.getElementById(id).classList.remove('active'));
+            button.classList.add('active');
+            eventBus.publish(timeSpeedButtons[buttonId]);
+        }
     });
 });
 document.getElementById("popwindow").addEventListener('click', () =>{
