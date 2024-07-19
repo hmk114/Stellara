@@ -168,16 +168,31 @@ class Application {
             this.#centerObject = this.#celestialObjects[2].selectMesh;
         });
 
-        eventBus.subscribe('topView', () => {
-            this.#camera.position.set(0, 0, 2.5);
+        eventBus.subscribe('TopView', () => {
+            console.log('TopView');
+            let vector = new THREE.Vector3();
+            vector.subVectors(this.#camera.position, this.#centerObject.position);
+            this.#camera.position.z = vector.length();
+            this.#camera.position.x = this.#centerObject.position.x;
+            this.#camera.position.y = this.#centerObject.position.y;
         });
 
-        eventBus.subscribe('sideView', () => {
-            this.#camera.position.set(2, 0, 0.1);
+        eventBus.subscribe('SideView', () => {
+            let vector = new THREE.Vector3();
+            vector.subVectors(this.#camera.position, this.#centerObject.position); 
+            var Position = vector.length() / Math.sqrt(2); 
+            this.#camera.position.x = this.#centerObject.position.x + Position;
+            this.#camera.position.y = this.#centerObject.position.y + Position;
+            this.#camera.position.z = 0;
         });
 
         eventBus.subscribe('3DView', () => {
-            this.#camera.position.set(1.5, 1.5, 1.5);
+            let vector = new THREE.Vector3();
+            vector.subVectors(this.#camera.position, this.#centerObject.position);
+            var Position = vector.length() / Math.sqrt(3);
+            this.#camera.position.x = this.#centerObject.position.x + Position;
+            this.#camera.position.y = this.#centerObject.position.y + Position;
+            this.#camera.position.z = this.#centerObject.position.z + Position;
         });
 
         eventBus.subscribe('TwotimesSpeed', () => {
