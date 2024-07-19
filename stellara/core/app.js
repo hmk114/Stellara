@@ -171,6 +171,7 @@ class Application {
 
         if (this.#lastRenderTime) {
             this.#currentTime = new Date(this.#currentTime.getTime() + (Date.now() - this.#lastRenderTime.getTime()) * this.#timeSpeed);
+            document.getElementById("nowtime").innerText = this.#currentTime.toLocaleString();
         }
         this.#lastRenderTime = new Date();
 
