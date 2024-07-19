@@ -35,21 +35,6 @@ class EventBus {
     }
 }
 
-const timeSpeedButtons = {
-    FourtimesSpeed: 'FourtimesSpeed',
-    TwotimesSpeed: 'TwotimesSpeed',
-    HalfSpeed: 'HalfSpeed',
-    QuarterSpeed: 'QuarterSpeed',
-    Stop: 'Stop'
-};
-
-const speedTexts = {
-    FourtimesSpeed: 'X4',
-    TwotimesSpeed: 'X2',
-    Stop: 'X1',
-    HalfSpeed: 'X0.5',
-    QuarterSpeed: 'X0.25'
-};
 
 document.getElementById("EarthTransformation").addEventListener('click', () => eventBus.publish('EarthTransformation'));
 document.getElementById("TimeSelection").addEventListener('change', () => eventBus.publish('TimeSelection', document.getElementById("TimeSelection").value));
