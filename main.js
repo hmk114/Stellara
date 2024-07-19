@@ -38,8 +38,8 @@ class EventBus {
 
 document.getElementById("EarthTransformation").addEventListener('click', () => eventBus.publish('EarthTransformation'));
 document.getElementById("TimeSelection").addEventListener('change', () => eventBus.publish('TimeSelection', document.getElementById("TimeSelection").value));
-document.getElementById("topView").addEventListener('click', () => eventBus.publish('topView'));
-document.getElementById("sideView").addEventListener('click', () => eventBus.publish('sideView'));
+document.getElementById("TopView").addEventListener('click', () => eventBus.publish('TopView'));
+document.getElementById("SideView").addEventListener('click', () => eventBus.publish('SideView'));
 document.getElementById("3DView").addEventListener('click', () => eventBus.publish('3DView'));
 document.getElementById("ViewSwitchingSun").addEventListener('click', () => eventBus.publish('ViewSwitchingSun'));
 document.getElementById("ViewSwitchingEarth").addEventListener('click', () => eventBus.publish('ViewSwitchingEarth'));
