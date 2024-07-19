@@ -14,6 +14,10 @@ class Application {
     #controls;
     #raycaster;
 
+    #rendererAux;
+    #cameraAux;
+    #controlsAux;
+
     #celestialObjects;
 
     #currentTime;
@@ -22,7 +26,7 @@ class Application {
 
     #centerObject;
 
-    constructor(celestialObjects = [], eventBus, type = 0) {
+    constructor(celestialObjects = [], eventBus) {
 
         this.#scene = new THREE.Scene();
         this.#camera = new THREE.PerspectiveCamera(50, window.innerWidth / window.innerHeight, 0.00001, 100);
@@ -33,6 +37,15 @@ class Application {
         this.#renderer.shadowMap.needsUpdate = true;
         this.#renderer.shadowMap.type = THREE.PCFSoftShadowMap;
 
+        this.#rendererAux = new THREE.WebGLRenderer({ antialias: true });
+        const container = document.getElementById('container');
+        this.#rendererAux.setSize(container.clientWidth, container.clientHeight);
+        this.#rendererAux.shadowMap.enabled = true;
+        this.#rendererAux.shadowMap.autoUpdate = true;
+        this.#rendererAux.shadowMap.needsUpdate = true;
+        this.#rendererAux.shadowMap.type = THREE.PCFSoftShadowMap;
+
+
         this.#raycaster = new THREE.Raycaster();
 
         this.#celestialObjects = celestialObjects;
@@ -41,14 +54,11 @@ class Application {
             obj.showRotationAxis = true;
         }
 
-        if(type === 1)
-            {
-                const container = document.getElementById('container');
-                this.#renderer.setSize(container.clientWidth, container.clientHeight);
-                container.appendChild(this.#renderer.domElement);
-                this.#camera.aspect = container.clientWidth / container.clientHeight;
-                this.#camera.updateProjectionMatrix();
-            }
+        // debug
+        // const sphere = new THREE.SphereGeometry(0.01, 32, 32);
+        // const material = new THREE.MeshBasicMaterial({ color: 0xffff00 });
+        // const mesh = new THREE.Mesh(sphere, material);
+        // this.#scene.add(mesh);
 
         // 切换主题
         this.#centerObject = this.#celestialObjects[0].selectMesh;
@@ -65,16 +75,20 @@ class Application {
         pointLight.shadow.camera.near = 0.00005;
         pointLight.shadow.camera.far = 10;
         this.#scene.add(pointLight);
-        
+
         // camera init
         this.#camera.position.set(0, 1, 0);
         this.#camera.up.set(0, 0, 1);
+
+        this.#cameraAux = new THREE.PerspectiveCamera(50, container.clientWidth / container.clientHeight, 0.00001, 100);
+        this.#cameraAux.position.set(1.2, 1, 1.3);
+        this.#cameraAux.up.set(0, 0, 1);
 
         this.#controls = new OrbitControls(this.#camera, this.#renderer.domElement);
         this.#controls.enableDamping = true;
         this.#controls.dampingFactor = 0.1;
 
-        this.#controls.trackTarget = function() {
+        this.#controls.trackTarget = function () {
             if (!this.targetLastPosition) {
                 this.targetLastPosition = this.target.clone();
                 return;
@@ -84,24 +98,36 @@ class Application {
             this.object.position.add(targetPositionDelta);
         };
 
+        this.#controlsAux = new OrbitControls(this.#cameraAux, this.#rendererAux.domElement);
+        this.#controlsAux.enableDamping = true;
+        this.#controlsAux.dampingFactor = 0.1;
+
+        this.#controlsAux.trackTarget = function () {
+            if (!this.targetLastPosition) {
+                this.targetLastPosition = this.target.clone();
+                return;
+            }
+            const targetPositionDelta = this.target.clone().sub(this.targetLastPosition);
+            this.targetLastPosition = this.target.clone();
+            this.object.position.add(targetPositionDelta);
+        }
+
         // this.currentTime = new Date();
         this.#currentTime = new Date("2024-10-03 02:30:00");
-        this.#timeSpeed = initTimeSpeed; 
+        this.#timeSpeed = initTimeSpeed;
         this.#lastRenderTime = null;
 
-        if(type === 0)document.body.appendChild(this.#renderer.domElement);
+        document.body.appendChild(this.#renderer.domElement);
+        document.getElementById('container').appendChild(this.#rendererAux.domElement);
 
         window.addEventListener('resize', () => {
             this.#camera.aspect = window.innerWidth / window.innerHeight;
             this.#camera.updateProjectionMatrix();
             this.#renderer.setSize(window.innerWidth, window.innerHeight);
-            if(type === 1)
-            {
-                const container = document.getElementById('container');
-                this.#renderer.setSize(container.clientWidth, container.clientHeight);
-                this.#camera.aspect = container.clientWidth / container.clientHeight;
-                this.#camera.updateProjectionMatrix();
-            }
+
+            this.#rendererAux.setSize(container.clientWidth, container.clientHeight);
+            this.#cameraAux.aspect = container.clientWidth / container.clientHeight;
+            this.#cameraAux.updateProjectionMatrix();
         });
 
         window.addEventListener('click', e => {
@@ -127,10 +153,11 @@ class Application {
             let t = selectedTime.split('T');
             let tt = t[0] + ' ' + t[1] + ':00';
             this.#currentTime = new Date(tt);
+            this.#lastRenderTime = null;
         });
 
         eventBus.subscribe('Stop', () => {
-            if(this.#timeSpeed === 0) {
+            if (this.#timeSpeed === 0) {
                 this.#timeSpeed = initTimeSpeed;
             } else {
                 this.#timeSpeed = 0;
@@ -162,7 +189,7 @@ class Application {
         });
 
         eventBus.subscribe('popwindow', () => {
-            
+
         });
     }
 
@@ -178,14 +205,19 @@ class Application {
         const jd = convertToJulianDate(this.#currentTime);
         this.#celestialObjects[1].updatePosition(this.#scene, this.#camera, jd, [0, 0, 0]);
 
-        // Note: You can use the following code to switch the texture of the Earth object.
-
         this.#controls.target = this.#centerObject.position;
         this.#controls.trackTarget();
         this.#controls.update();
 
+        this.#controlsAux.target = this.#centerObject.position;
+        this.#controlsAux.trackTarget();
+        this.#controlsAux.update();
+
         this.#updateShadow();
         this.#renderer.render(this.#scene, this.#camera);
+        this.#rendererAux.render(this.#scene, this.#cameraAux);
+        // console.log(this.#camera.position);
+        // console.log(this.#cameraAux.position);
     }
 
     #updateShadow() {
