@@ -142,6 +142,42 @@ class Application {
             }
         });
 
+        // eventBusconst
+        const timeSpeedActions = {
+            'Stop': () => {
+                console.log('stop');
+                this.#timeSpeed = this.#timeSpeed === 0 ? initTimeSpeed : 0;
+            },
+            'FourtimesSpeed': () => { this.#timeSpeed = 4 * initTimeSpeed; },
+            'TwotimesSpeed': () => { this.#timeSpeed = 2 * initTimeSpeed; },
+            'HalfSpeed': () => { this.#timeSpeed = 0.5 * initTimeSpeed; },
+            'QuarterSpeed': () => { this.#timeSpeed = 0.25 * initTimeSpeed; }
+        };
+
+        const View = {
+            'topView': () => {
+                this.#camera.position.set(0, 0, 2.5);
+            },
+            'sideView': () => {
+                this.#camera.position.set(2, 0, 0.1);
+            },
+            '3DView': () => {
+                this.#camera.position.set(1.5, 1.5, 1.5);
+            }
+        };
+
+        const ViewSwitching = {
+            'ViewSwitchingSun': () => {
+                this.#centerObject = this.#celestialObjects[0].selectMesh;
+            },
+            'ViewSwitchingEarth': () => {
+                this.#centerObject = this.#celestialObjects[1].selectMesh;
+            },
+            'ViewSwitchingMoon': () => {
+                this.#centerObject = this.#celestialObjects[2].selectMesh;
+            }
+        };
+
         // eventBus
         eventBus.subscribe('EarthTransformation', () => {
             this.#celestialObjects[1].switchTexture(this.#celestialObjects[1].curMaterialIndex ^ 1);
@@ -155,37 +191,17 @@ class Application {
             this.#currentTime = new Date(tt);
             this.#lastRenderTime = null;
         });
-
-        eventBus.subscribe('Stop', () => {
-            if (this.#timeSpeed === 0) {
-                this.#timeSpeed = initTimeSpeed;
-            } else {
-                this.#timeSpeed = 0;
-            }
+        
+        Object.entries(timeSpeedActions).forEach(([event, action]) => {
+            eventBus.subscribe(event, action);
         });
 
-        eventBus.subscribe('topView', () => {
-            this.#camera.position.set(0, 0, 2.5);
+        Object.entries(View).forEach(([event, action]) => {
+            eventBus.subscribe(event, action);
         });
 
-        eventBus.subscribe('sideView', () => {
-            this.#camera.position.set(2, 0, 0.1);
-        });
-
-        eventBus.subscribe('3DView', () => {
-            this.#camera.position.set(1.5, 1.5, 1.5);
-        });
-
-        eventBus.subscribe('ViewSwitchingEarth', () => {
-            this.#centerObject = this.#celestialObjects[1].selectMesh;
-        });
-
-        eventBus.subscribe('ViewSwitchingSun', () => {
-            this.#centerObject = this.#celestialObjects[0].selectMesh;
-        });
-
-        eventBus.subscribe('ViewSwitchingMoon', () => {
-            this.#centerObject = this.#celestialObjects[2].selectMesh;
+        Object.entries(ViewSwitching).forEach(([event, action]) => {
+            eventBus.subscribe(event, action);
         });
 
         eventBus.subscribe('popwindow', () => {

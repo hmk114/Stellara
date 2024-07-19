@@ -5,12 +5,12 @@
 		<title>My first three.js app</title>
 		<style>
 			body { margin: 0; }
+
             .dropdown {
                 position: relative;
                 display: inline-block;
             }
     
-            /* 下拉菜单内容样式 */
             .dropdown-content {
                 display: none;
                 position: absolute;
@@ -20,7 +20,6 @@
                 z-index: 1;
             }
     
-            /* 下拉菜单链接样式 */
             .dropdown-content a {
                 color: black;
                 padding: 12px 16px;
@@ -28,21 +27,19 @@
                 display: block;
             }
     
-            /* 鼠标悬停时链接的样式 */
             .dropdown-content a:hover {
                 background-color: #f1f1f1;
             }
-    
-            /* 显示下拉菜单 */
+
             .dropdown:hover .dropdown-content {
                 display: block;
             }
-    
-            /* 按钮悬停时的样式 */
-            .dropdown:hover .dropdown-button {
-                background-color: #3e8e41;
+            
+            .active {
+                background-color: darkgray; /* 你可以根据需要更改颜色 */
+                color: white; /* 你可以根据需要更改文字颜色 */
             }
-
+            
 		</style>
 	</head>
 	<body>
@@ -68,7 +65,13 @@
 					value="2024-10-03T02:30"
 					id="TimeSelection"
 			/>
-			<button id="Stop">Stop</button>
+			<div class="TimeSpeed">
+                <button id="QuarterSpeed">X0.25</button>
+                <button id="HalfSpeed">X0.5</button>
+                <button id="Stop">Stop</button>
+                <button id="TwotimesSpeed">X2</button>
+                <button id="FourtimesSpeed">X4</button>
+            </div>
 			<button id="popwindow">日食月食</button>
 		</div>
 		<div 
