@@ -142,27 +142,6 @@ class Application {
             }
         });
 
-        // eventBusconst
-        const timeSpeedActions = {
-            'Stop': () => {
-                this.#timeSpeed = this.#timeSpeed === 0 ? initTimeSpeed : 0;
-            },
-            'FourtimesSpeed': () => { 
-                console.log("1");
-                this.#timeSpeed = this.#timeSpeed === 1000 * initTimeSpeed ? initTimeSpeed : 1000 * initTimeSpeed; 
-            },
-            'TwotimesSpeed': () => { 
-                this.#timeSpeed = this.#timeSpeed === 2 * initTimeSpeed ? initTimeSpeed : 2 * initTimeSpeed;
-            },
-            'HalfSpeed': () => { 
-                this.#timeSpeed = this.#timeSpeed === 0.5 * initTimeSpeed ? initTimeSpeed : 0.5 * initTimeSpeed;
-            },
-            'QuarterSpeed': () => { 
-                this.#timeSpeed = this.#timeSpeed === 0.25 * initTimeSpeed ? initTimeSpeed : 0.25 * initTimeSpeed;
-            }
-        };
-
-
         // eventBus
         eventBus.subscribe('EarthTransformation', () => {
             this.#celestialObjects[1].switchTexture(this.#celestialObjects[1].curMaterialIndex ^ 1);
@@ -201,8 +180,21 @@ class Application {
             this.#camera.position.set(1.5, 1.5, 1.5);
         });
 
-        Object.entries(timeSpeedActions).forEach(([event, action]) => {
-            eventBus.subscribe(event, action);
+        eventBus.subscribe('TwotimesSpeed', () => {
+            this.#timeSpeed *= 2;
+        });
+
+        eventBus.subscribe('HalfSpeed', () => {
+            this.#timeSpeed *= 0.5;
+        });
+
+        eventBus.subscribe('ReturnSpeed', () => {
+            console.log('ReturnSpeed');
+            this.#timeSpeed = initTimeSpeed;
+        });
+
+        eventBus.subscribe('Stop', () => {
+            this.#timeSpeed = 0;
         });
 
         eventBus.subscribe('popwindow', () => {

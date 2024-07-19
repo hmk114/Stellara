@@ -59,19 +59,10 @@ document.getElementById("3DView").addEventListener('click', () => eventBus.publi
 document.getElementById("ViewSwitchingSun").addEventListener('click', () => eventBus.publish('ViewSwitchingSun'));
 document.getElementById("ViewSwitchingEarth").addEventListener('click', () => eventBus.publish('ViewSwitchingEarth'));
 document.getElementById("ViewSwitchingMoon").addEventListener('click', () => eventBus.publish('ViewSwitchingMoon'));
-Object.keys(timeSpeedButtons).forEach(buttonId => {
-    const button = document.getElementById(buttonId);
-    button.addEventListener('click', () => {
-        if (button.classList.contains('active')) {
-            button.classList.remove('active');
-            eventBus.publish('Stop');
-        } else {
-            Object.keys(timeSpeedButtons).forEach(id => document.getElementById(id).classList.remove('active'));
-            button.classList.add('active');
-            eventBus.publish(timeSpeedButtons[buttonId]);
-        }
-    });
-});
+document.getElementById("HalfSpeed").addEventListener('click', () => eventBus.publish('HalfSpeed'));
+document.getElementById("TwotimesSpeed").addEventListener('click', () => eventBus.publish('TwotimesSpeed'));
+document.getElementById("ReturnSpeed").addEventListener('click', () => eventBus.publish('ReturnSpeed'));
+document.getElementById("Stop").addEventListener('click', () => eventBus.publish('Stop'));
 document.getElementById("popwindow").addEventListener('click', () =>{
     eventBus.publish('popwindow');
 });

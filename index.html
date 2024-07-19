@@ -35,10 +35,6 @@
                 display: block;
             }
             
-            .active {
-                background-color: darkgray; /* 你可以根据需要更改颜色 */
-                color: white; /* 你可以根据需要更改文字颜色 */
-            }
             
 		</style>
 	</head>
@@ -66,11 +62,22 @@
 					id="TimeSelection"
 			/>
 			<div class="TimeSpeed">
-                <button id="QuarterSpeed">X0.25</button>
-                <button id="HalfSpeed">X0.5</button>
-                <button id="Stop">Stop</button>
-                <button id="TwotimesSpeed">X2</button>
-                <button id="FourtimesSpeed">X4</button>
+                <button id="HalfSpeed">
+                    <svg width="16" height="16" viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg">
+                        <path d="M16 2L2 10L16 16V4Z" fill="black"/>
+                    </svg>                    
+                </button>
+                <button id="Stop">
+                    <svg width="16" height="16" viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg">
+                        <rect x="3" y="4" width="10" height="10" fill="black"/>
+                    </svg>
+                </button>
+                <button id="TwotimesSpeed">
+                    <svg width="16" height="16" viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg">
+                        <path d="M2 0L14 8L2 16V0Z" fill="black"/>
+                    </svg>
+                </button>
+                <button id="ReturnSpeed">Return</button>
             </div>
 			<button id="popwindow">日食月食</button>
 		</div>
