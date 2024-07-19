@@ -169,15 +169,24 @@ class Application {
         });
 
         eventBus.subscribe('topView', () => {
-            this.#camera.position.set(0, 0, 2.5);
+            this.#camera.position.z = 
+            Math.sqrt(this.#camera.position.x * this.#camera.position.x + this.#camera.position.y * this.#camera.position.y + this.#camera.position.z * this.#camera.position.z);
+            this.#camera.position.x = 0;
+            this.#camera.position.y = 0;
         });
 
         eventBus.subscribe('sideView', () => {
-            this.#camera.position.set(2, 0, 0.1);
+            this.#camera.position.x = 
+            Math.sqrt(this.#camera.position.x * this.#camera.position.x + this.#camera.position.y * this.#camera.position.y + this.#camera.position.z * this.#camera.position.z);
+            this.#camera.position.y = 0;
+            this.#camera.position.z = 0;
         });
 
         eventBus.subscribe('3DView', () => {
-            this.#camera.position.set(1.5, 1.5, 1.5);
+            var Position = 
+            Math.sqrt(this.#camera.position.x * this.#camera.position.x + this.#camera.position.y * this.#camera.position.y + this.#camera.position.z * this.#camera.position.z) / Math.sqrt(3);
+            this.#camera.position.set(Position, Position, Position);
+
         });
 
         eventBus.subscribe('TwotimesSpeed', () => {
