@@ -168,25 +168,31 @@ class Application {
             this.#centerObject = this.#celestialObjects[2].selectMesh;
         });
 
-        eventBus.subscribe('topView', () => {
-            this.#camera.position.z = 
-            Math.sqrt(this.#camera.position.x * this.#camera.position.x + this.#camera.position.y * this.#camera.position.y + this.#camera.position.z * this.#camera.position.z);
-            this.#camera.position.x = 0;
-            this.#camera.position.y = 0;
+        eventBus.subscribe('TopView', () => {
+            console.log('TopView');
+            let vector = new THREE.Vector3();
+            vector.subVectors(this.#camera.position, this.#centerObject.position);
+            this.#camera.position.z = vector.length();
+            this.#camera.position.x = this.#centerObject.position.x;
+            this.#camera.position.y = this.#centerObject.position.y;
         });
 
-        eventBus.subscribe('sideView', () => {
-            this.#camera.position.x = 
-            Math.sqrt(this.#camera.position.x * this.#camera.position.x + this.#camera.position.y * this.#camera.position.y + this.#camera.position.z * this.#camera.position.z);
-            this.#camera.position.y = 0;
+        eventBus.subscribe('SideView', () => {
+            let vector = new THREE.Vector3();
+            vector.subVectors(this.#camera.position, this.#centerObject.position); 
+            var Position = vector.length() / Math.sqrt(2); 
+            this.#camera.position.x = this.#centerObject.position.x + Position;
+            this.#camera.position.y = this.#centerObject.position.y + Position;
             this.#camera.position.z = 0;
         });
 
         eventBus.subscribe('3DView', () => {
-            var Position = 
-            Math.sqrt(this.#camera.position.x * this.#camera.position.x + this.#camera.position.y * this.#camera.position.y + this.#camera.position.z * this.#camera.position.z) / Math.sqrt(3);
-            this.#camera.position.set(Position, Position, Position);
-
+            let vector = new THREE.Vector3();
+            vector.subVectors(this.#camera.position, this.#centerObject.position);
+            var Position = vector.length() / Math.sqrt(3);
+            this.#camera.position.x = this.#centerObject.position.x + Position;
+            this.#camera.position.y = this.#centerObject.position.y + Position;
+            this.#camera.position.z = this.#centerObject.position.z + Position;
         });
 
         eventBus.subscribe('TwotimesSpeed', () => {
