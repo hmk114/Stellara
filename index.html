@@ -3,6 +3,7 @@
 	<head>
 		<meta charset="utf-8">
 		<title>My first three.js app</title>
+		<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/flatpickr/dist/flatpickr.min.css">
 		<style>
 			body { margin: 0; }
 
@@ -57,10 +58,11 @@
                     <a id="3DView">3D模式</a>
                 </div>
             </div>
-			<input 	type="datetime-local" 
-					value="2024-10-03T02:30"
-					id="TimeSelection"
-			/>
+			<button id="showPickerButton">设定时间</button>
+			<div id="pickerContainer" style="display: none; position: absolute; z-index: 1000;">
+				<input type="text" id="datetimePicker">
+			</div>
+
 			<div class="TimeSpeed">
                 <button id="HalfSpeed">
                     <svg width="16" height="16" viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg">
@@ -81,6 +83,8 @@
             </div>
 			<button id="popwindow">日食月食</button>
 		</div>
+
+
 		<div style="position: absolute; left: 10px; bottom: 10px; font-size: larger; color: white;" id = "nowtime"></div>
 		<div style="position: absolute; left: 10px; bottom: 30px; font-size: larger; color: white;" id = "timespeed"></div>
 
@@ -90,5 +94,6 @@
 		>
 		</div>
 		<script type="module" src="/main.js"></script>
+		<script src="https://cdn.jsdelivr.net/npm/flatpickr"></script>
 	</body>
 </html>

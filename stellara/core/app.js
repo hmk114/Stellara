@@ -149,9 +149,7 @@ class Application {
         });
 
         eventBus.subscribe('TimeSelection', selectedTime => {
-            let t = selectedTime.split('T');
-            let tt = t[0] + ' ' + t[1] + ':00';
-            this.#currentTime = new Date(tt);
+            this.#currentTime = new Date(selectedTime);
             this.#lastRenderTime = null;
         });
         
@@ -168,7 +166,6 @@ class Application {
         });
 
         eventBus.subscribe('TopView', () => {
-            console.log('TopView');
             let vector = new THREE.Vector3();
             vector.subVectors(this.#camera.position, this.#centerObject.position);
             this.#camera.position.z = vector.length();
@@ -205,7 +202,6 @@ class Application {
         });
 
         eventBus.subscribe('ReturnSpeed', () => {
-            console.log('ReturnSpeed');
             this.#timeSpeed = initTimeSpeed;
             currentTimeSpeed = initTimeSpeed;
         });

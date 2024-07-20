@@ -37,7 +37,6 @@ class EventBus {
 
 
 document.getElementById("EarthTransformation").addEventListener('click', () => eventBus.publish('EarthTransformation'));
-document.getElementById("TimeSelection").addEventListener('change', () => eventBus.publish('TimeSelection', document.getElementById("TimeSelection").value));
 document.getElementById("TopView").addEventListener('click', () => eventBus.publish('TopView'));
 document.getElementById("SideView").addEventListener('click', () => eventBus.publish('SideView'));
 document.getElementById("3DView").addEventListener('click', () => eventBus.publish('3DView'));
@@ -50,6 +49,30 @@ document.getElementById("ReturnSpeed").addEventListener('click', () => eventBus.
 document.getElementById("Stop").addEventListener('click', () => eventBus.publish('Stop'));
 document.getElementById("popwindow").addEventListener('click', () =>{
     eventBus.publish('popwindow');
+});
+
+document.getElementById('showPickerButton').addEventListener('click', function() {
+    var pickerContainer = document.getElementById('pickerContainer');
+    if (pickerContainer.style.display === 'none') {
+        pickerContainer.style.display = 'block';
+    } else {
+        pickerContainer.style.display = 'none';
+    }
+
+    var button = document.getElementById('showPickerButton');
+    var rect = button.getBoundingClientRect();
+    pickerContainer.style.left = rect.left + window.scrollX + 'px';
+
+});
+flatpickr("#datetimePicker", {
+    inline: true,
+    enableTime: true,
+    enableSeconds: true,
+    dateFormat: "Y-m-d H:i:S",
+    defaultDate: "2024-10-02 02:30:00",
+    onChange: function(selectedDates, dateStr, instance) {
+        eventBus.publish('TimeSelection', dateStr);
+    }
 });
 
 const eventBus = new EventBus();
