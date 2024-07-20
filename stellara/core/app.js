@@ -215,8 +215,14 @@ class Application {
             }
         });
 
-        eventBus.subscribe('popwindow', () => {
-
+        eventBus.subscribe('totalSolarEclipse', () => {
+            var container = document.getElementById('container');
+            if(container.style.opacity === '0'){
+                container.style.opacity = '100';
+            }
+            this.#centerObject = this.#celestialObjects[1].selectMesh;
+            this.#currentTime = new Date("2023-04-20 01:00:00");
+            // this.#camera.position.set(-0.84, -0.49, 0);
         });
     }
 

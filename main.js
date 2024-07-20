@@ -37,19 +37,26 @@ class EventBus {
 
 
 document.getElementById("EarthTransformation").addEventListener('click', () => eventBus.publish('EarthTransformation'));
+
 document.getElementById("TopView").addEventListener('click', () => eventBus.publish('TopView'));
 document.getElementById("SideView").addEventListener('click', () => eventBus.publish('SideView'));
 document.getElementById("3DView").addEventListener('click', () => eventBus.publish('3DView'));
+
 document.getElementById("ViewSwitchingSun").addEventListener('click', () => eventBus.publish('ViewSwitchingSun'));
 document.getElementById("ViewSwitchingEarth").addEventListener('click', () => eventBus.publish('ViewSwitchingEarth'));
 document.getElementById("ViewSwitchingMoon").addEventListener('click', () => eventBus.publish('ViewSwitchingMoon'));
+
 document.getElementById("HalfSpeed").addEventListener('click', () => eventBus.publish('HalfSpeed'));
 document.getElementById("TwotimesSpeed").addEventListener('click', () => eventBus.publish('TwotimesSpeed'));
 document.getElementById("ReturnSpeed").addEventListener('click', () => eventBus.publish('ReturnSpeed'));
 document.getElementById("Stop").addEventListener('click', () => eventBus.publish('Stop'));
-document.getElementById("popwindow").addEventListener('click', () =>{
-    eventBus.publish('popwindow');
-});
+
+document.getElementById("totalSolarEclipse").addEventListener('click', () => eventBus.publish('totalSolarEclipse'));
+document.getElementById("partialSolarEclipse").addEventListener('click', () => eventBus.publish('partialSolarEclipse'));
+document.getElementById("annularSolarEclipse").addEventListener('click', () => eventBus.publish('annularSolarEclipse'));
+document.getElementById("totalLunarEclipse").addEventListener('click', () => eventBus.publish('totalLunarEclipse'));
+document.getElementById("partialLunarEclipse").addEventListener('click', () => eventBus.publish('partialLunarEclipse'));
+document.getElementById("annularLunarEclipse").addEventListener('click', () => eventBus.publish('annularLunarEclipse'));
 
 document.getElementById('showPickerButton').addEventListener('click', function() {
     var pickerContainer = document.getElementById('pickerContainer');

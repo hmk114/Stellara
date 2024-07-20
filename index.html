@@ -79,9 +79,26 @@
                         <path d="M0 2L14 10L0 16V4Z" fill="black"/>
                     </svg>
                 </button>
-                <button id="ReturnSpeed">Return</button>
+                <button id="ReturnSpeed">初始速度</button>
             </div>
-			<button id="popwindow">日食月食</button>
+
+			<div class="dropdown">
+                <button class="dropdownbutton">日食</button>
+                <div class="dropdowncontent">
+                    <a id="totalSolarEclipse">日全食</a>
+                    <a id="partialSolarEclipse">日偏食</a>
+                    <a id="annularSolarEclipse">日环食</a>
+                </div>
+            </div>
+			<div class="dropdown">
+                <button class="dropdownbutton">月食</button>
+                <div class="dropdowncontent">
+                    <a id="totalLunarEclipse">月全食</a>
+                    <a id="partialLunarEclipse">月偏食</a>
+                    <a id="annularLunarEclipse">月环食</a>
+                </div>
+            </div>
+
 		</div>
 
 
@@ -89,7 +106,7 @@
 		<div style="position: absolute; left: 10px; bottom: 30px; font-size: larger; color: white;" id = "timespeed"></div>
 
 		<div 
-			style="position: absolute; top: 0; right: 0; width: 500px; height: 300px; background-color:aliceblue; border:1px solid white;"
+			style="position: absolute; top: 0; right: 0; width: 500px; height: 300px; background-color:aliceblue; border:1px solid white; opacity : 0;"
 			id = "container"
 		>
 		</div>
