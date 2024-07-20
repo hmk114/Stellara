@@ -66,10 +66,6 @@ document.getElementById('showPickerButton').addEventListener('click', function()
         pickerContainer.style.display = 'none';
     }
 
-    var button = document.getElementById('showPickerButton');
-    var rect = button.getBoundingClientRect();
-    pickerContainer.style.left = rect.left + window.scrollX + 'px';
-
 });
 flatpickr("#datetimePicker", {
     inline: true,
