@@ -215,14 +215,167 @@ class Application {
             }
         });
 
+        let timeout;
         eventBus.subscribe('totalSolarEclipse', () => {
             var container = document.getElementById('container');
+            if(timeout)
+            {
+                clearTimeout(timeout);
+            }
             if(container.style.opacity === '0'){
                 container.style.opacity = '100';
             }
             this.#centerObject = this.#celestialObjects[1].selectMesh;
-            this.#currentTime = new Date("2023-04-20 01:00:00");
-            // this.#camera.position.set(-0.84, -0.49, 0);
+            this.#currentTime = new Date("2023-04-20 05:00:00");
+            this.animate();
+
+            this.#camera.position.x = this.#centerObject.position.x + 0.0003;
+            this.#camera.position.y = this.#centerObject.position.y + 0.0003;
+            this.#camera.position.z = 0;
+
+            this.#cameraAux.position.x = this.#centerObject.position.x;
+            this.#cameraAux.position.y = this.#centerObject.position.y;
+            this.#cameraAux.position.z = this.#centerObject.position.z;
+            this.#cameraAux.fov = 5;
+            this.#cameraAux.updateProjectionMatrix();
+            timeout = setTimeout(() => {
+                document.getElementById('container').style.opacity = '0';
+            }, 8000);
+        });
+
+        eventBus.subscribe('partialSolarEclipse', () => {
+            var container = document.getElementById('container');
+            if(timeout)
+            {
+                clearTimeout(timeout);
+            }
+            if(container.style.opacity === '0'){
+                container.style.opacity = '100';
+            }
+            this.#centerObject = this.#celestialObjects[1].selectMesh;
+            this.#currentTime = new Date("2025-03-29 10:00:00");
+            this.animate();
+
+            this.#camera.position.x = this.#centerObject.position.x + 0.0002;
+            this.#camera.position.y = this.#centerObject.position.y + 0.0001;
+            this.#camera.position.z = 0.0003;
+
+            this.#cameraAux.position.x = this.#centerObject.position.x;
+            this.#cameraAux.position.y = this.#centerObject.position.y;
+            this.#cameraAux.position.z = this.#centerObject.position.z;
+            this.#cameraAux.fov = 5;
+            this.#cameraAux.updateProjectionMatrix();
+            timeout = setTimeout(() => {
+                document.getElementById('container').style.opacity = '0';
+            }, 8000);
+        });
+        
+        eventBus.subscribe('annularSolarEclipse', () => {
+            var container = document.getElementById('container');
+            if(timeout)
+            {
+                clearTimeout(timeout);
+            }
+            if(container.style.opacity === '0'){
+                container.style.opacity = '100';
+            }
+            this.#centerObject = this.#celestialObjects[1].selectMesh;
+            this.#currentTime = new Date("2024-10-02 15:00:00");
+            this.animate();
+
+            this.#camera.position.x = this.#centerObject.position.x - 0.0004;
+            this.#camera.position.y = this.#centerObject.position.y;
+            this.#camera.position.z = 0;
+
+            this.#cameraAux.position.x = this.#centerObject.position.x;
+            this.#cameraAux.position.y = this.#centerObject.position.y;
+            this.#cameraAux.position.z = this.#centerObject.position.z;
+            this.#cameraAux.fov = 5;
+            this.#cameraAux.updateProjectionMatrix();
+            timeout = setTimeout(() => {
+                document.getElementById('container').style.opacity = '0';
+            }, 8000);
+        });
+
+        eventBus.subscribe('totalLunarEclipse', () => {
+            var container = document.getElementById('container');
+            if(timeout)
+            {
+                clearTimeout(timeout);
+            }
+            if(container.style.opacity === '0'){
+                container.style.opacity = '100';
+            }
+            this.#centerObject = this.#celestialObjects[2].selectMesh;
+            this.#currentTime = new Date("2025-03-14 05:00:00");
+            this.animate();
+
+            this.#camera.position.x = this.#centerObject.position.x + 0.0001;
+            this.#camera.position.y = this.#centerObject.position.y;
+            this.#camera.position.z = 0;
+
+            this.#cameraAux.position.x = this.#centerObject.position.x;
+            this.#cameraAux.position.y = this.#centerObject.position.y;
+            this.#cameraAux.position.z = this.#centerObject.position.z;
+            this.#cameraAux.fov = 5;
+            this.#cameraAux.updateProjectionMatrix();
+            timeout = setTimeout(() => {
+                document.getElementById('container').style.opacity = '0';
+            }, 8000);
+        });
+
+        eventBus.subscribe('partialLunarEclipse', () => {
+            var container = document.getElementById('container');
+            if(timeout)
+            {
+                clearTimeout(timeout);
+            }
+            if(container.style.opacity === '0'){
+                container.style.opacity = '100';
+            }
+            this.#centerObject = this.#celestialObjects[2].selectMesh;
+            this.#currentTime = new Date("2024-09-18 05:00:00");
+            this.animate();
+
+            this.#camera.position.x = this.#centerObject.position.x - 0.0001;
+            this.#camera.position.y = this.#centerObject.position.y;
+            this.#camera.position.z = 0;
+
+            this.#cameraAux.position.x = this.#centerObject.position.x;
+            this.#cameraAux.position.y = this.#centerObject.position.y;
+            this.#cameraAux.position.z = this.#centerObject.position.z;
+            this.#cameraAux.fov = 5;
+            this.#cameraAux.updateProjectionMatrix();
+            timeout = setTimeout(() => {
+                document.getElementById('container').style.opacity = '0';
+            }, 8000);
+        });
+
+        eventBus.subscribe('annularLunarEclipse', () => {
+            var container = document.getElementById('container');
+            if(timeout)
+            {
+                clearTimeout(timeout);
+            }
+            if(container.style.opacity === '0'){
+                container.style.opacity = '100';
+            }
+            this.#centerObject = this.#celestialObjects[2].selectMesh;
+            this.#currentTime = new Date("2023-05-05 10:00:00");
+            this.animate();
+
+            this.#camera.position.x = this.#centerObject.position.x + 0.00005;
+            this.#camera.position.y = this.#centerObject.position.y + 0.00005;
+            this.#camera.position.z = 0.0001;
+
+            this.#cameraAux.position.x = this.#centerObject.position.x;
+            this.#cameraAux.position.y = this.#centerObject.position.y;
+            this.#cameraAux.position.z = this.#centerObject.position.z;
+            this.#cameraAux.fov = 5;
+            this.#cameraAux.updateProjectionMatrix();
+            timeout = setTimeout(() => {
+                document.getElementById('container').style.opacity = '0';
+            }, 8000);
         });
     }
 
@@ -243,9 +396,10 @@ class Application {
         this.#controls.trackTarget();
         this.#controls.update();
 
-        this.#controlsAux.target = this.#centerObject.position;
-        this.#controlsAux.trackTarget();
-        this.#controlsAux.update();
+        // TODO: 3D视图下的相机位置，现在的位置是球体中心，阴影有点问题，所以注释掉了一个阴影没问题的相机位置
+        // this.#cameraAux.position.set(this.#camera.position.x, this.#camera.position.y, this.#camera.position.z);
+        this.#cameraAux.position.set(this.#centerObject.position.x, this.#centerObject.position.y, this.#centerObject.position.z);
+        this.#cameraAux.lookAt(this.#celestialObjects[0].position);
 
         this.#updateShadow();
         this.#renderer.render(this.#scene, this.#camera);
