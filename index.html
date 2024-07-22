@@ -3,15 +3,16 @@
 	<head>
 		<meta charset="utf-8">
 		<title>My first three.js app</title>
+		<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/flatpickr/dist/flatpickr.min.css">
 		<style>
 			body { margin: 0; }
+
             .dropdown {
                 position: relative;
                 display: inline-block;
             }
     
-            /* 下拉菜单内容样式 */
-            .dropdown-content {
+            .dropdowncontent {
                 display: none;
                 position: absolute;
                 background-color: #f9f9f9;
@@ -20,62 +21,100 @@
                 z-index: 1;
             }
     
-            /* 下拉菜单链接样式 */
-            .dropdown-content a {
+            .dropdowncontent a {
                 color: black;
                 padding: 12px 16px;
                 text-decoration: none;
                 display: block;
             }
     
-            /* 鼠标悬停时链接的样式 */
-            .dropdown-content a:hover {
+            .dropdowncontent a:hover {
                 background-color: #f1f1f1;
             }
-    
-            /* 显示下拉菜单 */
-            .dropdown:hover .dropdown-content {
+
+            .dropdown:hover .dropdowncontent {
                 display: block;
             }
-    
-            /* 按钮悬停时的样式 */
-            .dropdown:hover .dropdown-button {
-                background-color: #3e8e41;
-            }
-
+            
+            
 		</style>
 	</head>
 	<body>
-		<div style="position: absolute;">
-			<button id="EarthTransformation">地球换肤</button>
-            <div class="dropdown">
-                <button class="dropdown-button">视角切换</button>
-                <div class="dropdown-content">
-                    <a id="ViewSwitchingEarth">地球</a>
-                    <a id="ViewSwitchingMoon">月球</a>
-                    <a id="ViewSwitchingSun">太阳</a>
-                </div>
+		<div style="position: absolute;left: 50%;transform: translate(-50%);display: flex;justify-content: center; flex-direction: column; margin-top: 10px; row-gap: 10px;">
+			<div>
+				<button id="showPickerButton" >设定时间</button>
+				<div id="pickerContainer" style="display: none; position: absolute; z-index: 1;">
+					<input type="text" id="datetimePicker">
+				</div>
+				<div class="dropdown">
+					<button class="dropdownbutton">视角切换</button>
+					<div class="dropdowncontent">
+						<a id="ViewSwitchingEarth">地球</a>
+						<a id="ViewSwitchingMoon">月球</a>
+						<a id="ViewSwitchingSun">太阳</a>
+					</div>
+				</div>
+				<div class="dropdown">
+					<button class="dropdownbutton">视图切换</button>
+					<div class="dropdowncontent">
+						<a id="TopView">俯视</a>
+						<a id="SideView">侧视</a>
+						<a id="3DView">3D模式</a>
+					</div>
+				</div>
+				<button id="EarthTransformation">地球换肤</button>
+			</div>
+
+			<div class="TimeSpeed" style="display: flex; justify-content: center;">
+                <button id="HalfSpeed">
+                    <svg width="16" height="16" viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg">
+                        <path d="M16 2L2 10L16 16V4Z" fill="black"/>
+                    </svg>                    
+                </button>
+                <button id="Stop">
+                    <svg width="16" height="16" viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg">
+                        <rect x="3" y="4" width="10" height="10" fill="black"/>
+                    </svg>
+                </button>
+                <button id="TwotimesSpeed">
+                    <svg width="16" height="16" viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg">
+                        <path d="M0 2L14 10L0 16V4Z" fill="black"/>
+                    </svg>
+                </button>
+                <button id="ReturnSpeed">初始速度</button>
             </div>
-            <div class="dropdown">
-                <button class="dropdown-button">视图切换</button>
-                <div class="dropdown-content">
-                    <a id="topView">俯视</a>
-                    <a id="sideView">侧视</a>
-                    <a id="3DView">3D模式</a>
-                </div>
-            </div>
-			<input 	type="datetime-local" 
-					value="2024-10-03T02:30"
-					id="TimeSelection"
-			/>
-			<button id="Stop">Stop</button>
-			<button id="popwindow">日食月食</button>
+
+			<div style="display: flex; justify-content: center;">
+				<div class="dropdown">
+					<button class="dropdownbutton">日食</button>
+					<div class="dropdowncontent">
+						<a id="totalSolarEclipse">日全食</a>
+						<a id="partialSolarEclipse">日偏食</a>
+						<a id="annularSolarEclipse">日环食</a>
+					</div>
+				</div>
+				<div class="dropdown">
+					<button class="dropdownbutton">月食</button>
+					<div class="dropdowncontent">
+						<a id="totalLunarEclipse">月全食</a>
+						<a id="partialLunarEclipse">月偏食</a>
+						<a id="annularLunarEclipse">月环食</a>
+					</div>
+				</div>
+			</div>
+
 		</div>
+
+
+		<div style="position: absolute; left: 10px; bottom: 10px; font-size: larger; color: white;" id = "nowtime"></div>
+		<div style="position: absolute; left: 10px; bottom: 30px; font-size: larger; color: white;" id = "timespeed"></div>
+
 		<div 
-			style="position: absolute; top: 0; right: 0; width: 500px; height: 300px; background-color:aliceblue; border:1px solid white;"
+			style="position: absolute; bottom: 0; right: 0; width: 500px; height: 300px; background-color:aliceblue; border:1px solid white; opacity : 0;"
 			id = "container"
 		>
 		</div>
 		<script type="module" src="/main.js"></script>
+		<script src="https://cdn.jsdelivr.net/npm/flatpickr"></script>
 	</body>
 </html>

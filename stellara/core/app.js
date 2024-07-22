@@ -3,9 +3,12 @@
 import * as THREE from 'three';
 import { OrbitControls } from 'three/addons/controls/OrbitControls.js';
 import { convertToJulianDate } from './time.js';
+import { radii } from './solar_system_data.js';
 
 // init number : 86400
-let initTimeSpeed = 120;
+
+let initTimeSpeed = 8640;
+let currentTimeSpeed = initTimeSpeed;
 
 class Application {
     #scene;
@@ -26,6 +29,8 @@ class Application {
 
     #centerObject;
 
+    #isShown = false;
+
     constructor(celestialObjects = [], eventBus) {
 
         this.#scene = new THREE.Scene();
@@ -44,6 +49,7 @@ class Application {
         this.#rendererAux.shadowMap.autoUpdate = true;
         this.#rendererAux.shadowMap.needsUpdate = true;
         this.#rendererAux.shadowMap.type = THREE.PCFSoftShadowMap;
+        // this.#rendererAux.autoClear = false;
 
         this.#raycaster = new THREE.Raycaster();
 
@@ -60,7 +66,7 @@ class Application {
         // this.#scene.add(mesh);
 
         // 切换主题
-        this.#centerObject = this.#celestialObjects[0].selectMesh;
+        this.#centerObject = this.#celestialObjects[0];
 
         // light
         const ambientLight = new THREE.AmbientLight(0x404040, 1.5);
@@ -97,19 +103,19 @@ class Application {
             this.object.position.add(targetPositionDelta);
         };
 
-        this.#controlsAux = new OrbitControls(this.#cameraAux, this.#rendererAux.domElement);
-        this.#controlsAux.enableDamping = true;
-        this.#controlsAux.dampingFactor = 0.1;
+        // this.#controlsAux = new OrbitControls(this.#cameraAux, this.#rendererAux.domElement);
+        // this.#controlsAux.enableDamping = true;
+        // this.#controlsAux.dampingFactor = 0.1;
 
-        this.#controlsAux.trackTarget = function () {
-            if (!this.targetLastPosition) {
-                this.targetLastPosition = this.target.clone();
-                return;
-            }
-            const targetPositionDelta = this.target.clone().sub(this.targetLastPosition);
-            this.targetLastPosition = this.target.clone();
-            this.object.position.add(targetPositionDelta);
-        }
+        // this.#controlsAux.trackTarget = function () {
+        //     if (!this.targetLastPosition) {
+        //         this.targetLastPosition = this.target.clone();
+        //         return;
+        //     }
+        //     const targetPositionDelta = this.target.clone().sub(this.targetLastPosition);
+        //     this.targetLastPosition = this.target.clone();
+        //     this.object.position.add(targetPositionDelta);
+        // }
 
         // this.currentTime = new Date();
         this.#currentTime = new Date("2024-10-03 02:30:00");
@@ -124,9 +130,9 @@ class Application {
             this.#camera.updateProjectionMatrix();
             this.#renderer.setSize(window.innerWidth, window.innerHeight);
 
-            this.#rendererAux.setSize(container.clientWidth, container.clientHeight);
-            this.#cameraAux.aspect = container.clientWidth / container.clientHeight;
-            this.#cameraAux.updateProjectionMatrix();
+            // this.#rendererAux.setSize(container.clientWidth, container.clientHeight);
+            // this.#cameraAux.aspect = container.clientWidth / container.clientHeight;
+            // this.#cameraAux.updateProjectionMatrix();
         });
 
         window.addEventListener('click', e => {
@@ -144,51 +150,242 @@ class Application {
         // eventBus
         eventBus.subscribe('EarthTransformation', () => {
             this.#celestialObjects[1].switchTexture(this.#celestialObjects[1].curMaterialIndex ^ 1);
-            this.#centerObject = this.#celestialObjects[1].selectMesh;
-            console.log(this.#camera)
         });
 
         eventBus.subscribe('TimeSelection', selectedTime => {
-            let t = selectedTime.split('T');
-            let tt = t[0] + ' ' + t[1] + ':00';
-            this.#currentTime = new Date(tt);
+            this.#currentTime = new Date(selectedTime);
             this.#lastRenderTime = null;
         });
 
-        eventBus.subscribe('Stop', () => {
-            if (this.#timeSpeed === 0) {
-                this.#timeSpeed = initTimeSpeed;
-            } else {
-                this.#timeSpeed = 0;
-            }
-        });
-
-        eventBus.subscribe('topView', () => {
-            this.#camera.position.set(0, 0, 2.5);
-        });
-
-        eventBus.subscribe('sideView', () => {
-            this.#camera.position.set(2, 0, 0.1);
-        });
-
-        eventBus.subscribe('3DView', () => {
-            this.#camera.position.set(1.5, 1.5, 1.5);
+        eventBus.subscribe('ViewSwitchingSun', () => {
+            this.#centerObject = this.#celestialObjects[0];
         });
 
         eventBus.subscribe('ViewSwitchingEarth', () => {
-            this.#centerObject = this.#celestialObjects[1].selectMesh;
-        });
-
-        eventBus.subscribe('ViewSwitchingSun', () => {
-            this.#centerObject = this.#celestialObjects[0].selectMesh;
+            this.#centerObject = this.#celestialObjects[1];
         });
 
         eventBus.subscribe('ViewSwitchingMoon', () => {
             this.#centerObject = this.#celestialObjects[2].selectMesh;
         });
 
-        eventBus.subscribe('popwindow', () => {
+        eventBus.subscribe('TopView', () => {
+            let vector = new THREE.Vector3();
+            vector.subVectors(this.#camera.position, this.#centerObject.position);
+            this.#camera.position.z = vector.length();
+            this.#camera.position.x = this.#centerObject.position.x;
+            this.#camera.position.y = this.#centerObject.position.y;
+        });
 
+        eventBus.subscribe('SideView', () => {
+            let vector = new THREE.Vector3();
+            vector.subVectors(this.#camera.position, this.#centerObject.position);
+            var Position = vector.length() / Math.sqrt(2);
+            this.#camera.position.x = this.#centerObject.position.x + Position;
+            this.#camera.position.y = this.#centerObject.position.y + Position;
+            this.#camera.position.z = 0;
+        });
+
+        eventBus.subscribe('3DView', () => {
+            let vector = new THREE.Vector3();
+            vector.subVectors(this.#camera.position, this.#centerObject.position);
+            var Position = vector.length() / Math.sqrt(3);
+            this.#camera.position.x = this.#centerObject.position.x + Position;
+            this.#camera.position.y = this.#centerObject.position.y + Position;
+            this.#camera.position.z = this.#centerObject.position.z + Position;
+        });
+
+        eventBus.subscribe('TwotimesSpeed', () => {
+            currentTimeSpeed *= 2;
+            this.#timeSpeed = currentTimeSpeed;
+        });
+
+        eventBus.subscribe('HalfSpeed', () => {
+            currentTimeSpeed *= 0.5;
+            this.#timeSpeed = currentTimeSpeed;
+        });
+
+        eventBus.subscribe('ReturnSpeed', () => {
+            this.#timeSpeed = initTimeSpeed;
+            currentTimeSpeed = initTimeSpeed;
+        });
+
+        eventBus.subscribe('Stop', () => {
+            if (this.#timeSpeed === 0) {
+                this.#timeSpeed = currentTimeSpeed;
+            }
+            else {
+                this.#timeSpeed = 0;
+            }
+        });
+
+        let timeout;
+        eventBus.subscribe('totalSolarEclipse', () => {
+            this.#isShown = true;
+            var container = document.getElementById('container');
+            if (timeout) {
+                clearTimeout(timeout);
+            }
+            if (container.style.opacity === '0') {
+                container.style.opacity = '100';
+            }
+            this.#centerObject = this.#celestialObjects[1];
+            this.#currentTime = new Date("2024-04-08 18:00:00");
+            this.animate();
+
+            this.#camera.position.x = this.#centerObject.position.x + 0.0002;
+            this.#camera.position.y = this.#centerObject.position.y + 0.0001;
+            this.#camera.position.z = 0.0003;
+
+            this.#cameraAux.position.x = this.#centerObject.position.x;
+            this.#cameraAux.position.y = this.#centerObject.position.y;
+            this.#cameraAux.position.z = this.#centerObject.position.z;
+            this.#cameraAux.fov = 5;
+            this.#cameraAux.updateProjectionMatrix();
+            timeout = setTimeout(() => {
+                document.getElementById('container').style.opacity = '0';
+                this.#isShown = false;
+            }, 8000);
+        });
+
+        eventBus.subscribe('partialSolarEclipse', () => {
+            this.#isShown = true;
+            var container = document.getElementById('container');
+            if (timeout) {
+                clearTimeout(timeout);
+            }
+            if (container.style.opacity === '0') {
+                container.style.opacity = '100';
+            }
+            this.#centerObject = this.#celestialObjects[1];
+            this.#currentTime = new Date("2023-04-20 05:00:00");
+            this.animate();
+
+            this.#camera.position.x = this.#centerObject.position.x + 0.0003;
+            this.#camera.position.y = this.#centerObject.position.y + 0.0003;
+            this.#camera.position.z = 0;
+
+            this.#cameraAux.position.x = this.#centerObject.position.x;
+            this.#cameraAux.position.y = this.#centerObject.position.y;
+            this.#cameraAux.position.z = this.#centerObject.position.z;
+            this.#cameraAux.fov = 5;
+            this.#cameraAux.updateProjectionMatrix();
+            timeout = setTimeout(() => {
+                document.getElementById('container').style.opacity = '0';
+                this.#isShown = false;
+            }, 8000);
+        });
+
+        eventBus.subscribe('annularSolarEclipse', () => {
+            this.#isShown = true;
+            var container = document.getElementById('container');
+            if (timeout) {
+                clearTimeout(timeout);
+            }
+            if (container.style.opacity === '0') {
+                container.style.opacity = '100';
+            }
+            this.#centerObject = this.#celestialObjects[1];
+            this.#currentTime = new Date("2024-10-02 15:00:00");
+            this.animate();
+
+            this.#camera.position.x = this.#centerObject.position.x - 0.0004;
+            this.#camera.position.y = this.#centerObject.position.y;
+            this.#camera.position.z = 0;
+
+            this.#cameraAux.position.x = this.#centerObject.position.x;
+            this.#cameraAux.position.y = this.#centerObject.position.y;
+            this.#cameraAux.position.z = this.#centerObject.position.z;
+            this.#cameraAux.fov = 5;
+            this.#cameraAux.updateProjectionMatrix();
+            timeout = setTimeout(() => {
+                document.getElementById('container').style.opacity = '0';
+                this.#isShown = false;
+            }, 8000);
+        });
+
+        eventBus.subscribe('totalLunarEclipse', () => {
+            var container = document.getElementById('container');
+            this.#isShown = true;
+            if (timeout) {
+                clearTimeout(timeout);
+            }
+            if (container.style.opacity === '0') {
+                container.style.opacity = '100';
+            }
+            this.#centerObject = this.#celestialObjects[2];
+            this.#currentTime = new Date("2025-03-14 05:00:00");
+            this.animate();
+
+            this.#camera.position.x = this.#centerObject.position.x + 0.0001;
+            this.#camera.position.y = this.#centerObject.position.y;
+            this.#camera.position.z = 0;
+
+            this.#cameraAux.position.x = this.#centerObject.position.x;
+            this.#cameraAux.position.y = this.#centerObject.position.y;
+            this.#cameraAux.position.z = this.#centerObject.position.z;
+            this.#cameraAux.fov = 5;
+            this.#cameraAux.updateProjectionMatrix();
+            timeout = setTimeout(() => {
+                document.getElementById('container').style.opacity = '0';
+                this.#isShown = false;
+            }, 8000);
+        });
+
+        eventBus.subscribe('partialLunarEclipse', () => {
+            var container = document.getElementById('container');
+            this.#isShown = true;
+            if (timeout) {
+                clearTimeout(timeout);
+            }
+            if (container.style.opacity === '0') {
+                container.style.opacity = '100';
+            }
+            this.#centerObject = this.#celestialObjects[2];
+            this.#currentTime = new Date("2024-09-18 05:00:00");
+            this.animate();
+
+            this.#camera.position.x = this.#centerObject.position.x - 0.0001;
+            this.#camera.position.y = this.#centerObject.position.y;
+            this.#camera.position.z = 0;
+
+            this.#cameraAux.position.x = this.#centerObject.position.x;
+            this.#cameraAux.position.y = this.#centerObject.position.y;
+            this.#cameraAux.position.z = this.#centerObject.position.z;
+            this.#cameraAux.fov = 5;
+            this.#cameraAux.updateProjectionMatrix();
+            timeout = setTimeout(() => {
+                document.getElementById('container').style.opacity = '0';
+                this.#isShown = false;
+            }, 8000);
+        });
+
+        eventBus.subscribe('annularLunarEclipse', () => {
+            var container = document.getElementById('container');
+            this.#isShown = true;
+            if (timeout) {
+                clearTimeout(timeout);
+            }
+            if (container.style.opacity === '0') {
+                container.style.opacity = '100';
+            }
+            this.#centerObject = this.#celestialObjects[2];
+            this.#currentTime = new Date("2023-05-05 10:00:00");
+            this.animate();
+
+            this.#camera.position.x = this.#centerObject.position.x + 0.00005;
+            this.#camera.position.y = this.#centerObject.position.y + 0.00005;
+            this.#camera.position.z = 0.0001;
+
+            this.#cameraAux.position.x = this.#centerObject.position.x;
+            this.#cameraAux.position.y = this.#centerObject.position.y;
+            this.#cameraAux.position.z = this.#centerObject.position.z;
+            this.#cameraAux.fov = 5;
+            this.#cameraAux.updateProjectionMatrix();
+            timeout = setTimeout(() => {
+                document.getElementById('container').style.opacity = '0';
+                this.#isShown = false;
+            }, 8000);
         });
     }
 
@@ -197,8 +394,10 @@ class Application {
 
         if (this.#lastRenderTime) {
             this.#currentTime = new Date(this.#currentTime.getTime() + (Date.now() - this.#lastRenderTime.getTime()) * this.#timeSpeed);
+            document.getElementById("nowtime").innerText = this.#currentTime.toLocaleString();
         }
         this.#lastRenderTime = new Date();
+        document.getElementById('timespeed').innerText = 'Time Speed: *' + (currentTimeSpeed / initTimeSpeed >= 1 ? currentTimeSpeed / initTimeSpeed : '1/' + initTimeSpeed / currentTimeSpeed);
 
         const jd = convertToJulianDate(this.#currentTime);
         this.#celestialObjects[0].updatePosition(this.#scene, jd, [0, 0, 0]);
@@ -208,16 +407,35 @@ class Application {
         this.#controls.trackTarget();
         this.#controls.update();
 
-        this.#controlsAux.target = this.#centerObject.position;
-        this.#controlsAux.trackTarget();
-        this.#controlsAux.update();
+        // this.#cameraAux.position.set(this.#camera.position.x, this.#camera.position.y, this.#camera.position.z);
+
+        // TODO: 阴影问题：是因为自定义材料会导致渲染顺序问题！
+        if (this.#isShown) {
+            let vector = new THREE.Vector3();
+            vector.subVectors(this.#centerObject.position, this.#celestialObjects[0].position);
+            if (this.#centerObject === this.#celestialObjects[1]) {
+                vector = vector.multiplyScalar(1 - (radii.earth / vector.length()) - 0.00001).add(this.#celestialObjects[0].position);
+            } else if (this.#centerObject === this.#celestialObjects[2]) {
+                vector = vector.multiplyScalar(1 - (radii.moon / vector.length()) - 0.0001).add(this.#celestialObjects[0].position);
+            }
+            // console.log(vector);
+            // console.log(this.#centerObject.position);
+            this.#cameraAux.position.set(vector.x, vector.y, vector.z);
+            // this.#cameraAux.position.set(this.#centerObject.position.x, this.#centerObject.position.y, this.#centerObject.position.z);
+            this.#cameraAux.lookAt(this.#celestialObjects[0].position);
+            this.#rendererAux.render(this.#scene, this.#cameraAux);
+        } else{
+            // this.#cameraAux.position.set(1.2, 1, 1.3);
+            // this.#cameraAux.up.set(0, 0, 1);
+        }
 
         this.#updateSelectMeshScale(this.#camera);
         this.#updateMeshScale(this.#camera);
         this.#renderer.render(this.#scene, this.#camera);
 
-        this.#updateMeshScale(this.#cameraAux);
-        this.#rendererAux.render(this.#scene, this.#cameraAux);
+//         this.#updateMeshScale(this.#cameraAux);
+//         this.#rendererAux.render(this.#scene, this.#cameraAux);
+
     }
 
     #updateShadow() {
