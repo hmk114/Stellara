@@ -5,7 +5,7 @@ import { OrbitControls } from 'three/addons/controls/OrbitControls.js';
 import { convertToJulianDate } from './time.js';
 
 // init number : 86400
-let initTimeSpeed = 8640;
+let initTimeSpeed = 120;
 
 class Application {
     #scene;
@@ -44,7 +44,6 @@ class Application {
         this.#rendererAux.shadowMap.autoUpdate = true;
         this.#rendererAux.shadowMap.needsUpdate = true;
         this.#rendererAux.shadowMap.type = THREE.PCFSoftShadowMap;
-
 
         this.#raycaster = new THREE.Raycaster();
 
@@ -202,7 +201,8 @@ class Application {
         this.#lastRenderTime = new Date();
 
         const jd = convertToJulianDate(this.#currentTime);
-        this.#celestialObjects[1].updatePosition(this.#scene, this.#camera, jd, [0, 0, 0]);
+        this.#celestialObjects[0].updatePosition(this.#scene, jd, [0, 0, 0]);
+        this.#updateShadow();
 
         this.#controls.target = this.#centerObject.position;
         this.#controls.trackTarget();
@@ -212,11 +212,12 @@ class Application {
         this.#controlsAux.trackTarget();
         this.#controlsAux.update();
 
-        this.#updateShadow();
+        this.#updateSelectMeshScale(this.#camera);
+        this.#updateMeshScale(this.#camera);
         this.#renderer.render(this.#scene, this.#camera);
+
+        this.#updateMeshScale(this.#cameraAux);
         this.#rendererAux.render(this.#scene, this.#cameraAux);
-        // console.log(this.#camera.position);
-        // console.log(this.#cameraAux.position);
     }
 
     #updateShadow() {
@@ -225,6 +226,18 @@ class Application {
 
         for (const obj of shadowReceivingObjects) {
             obj.updateShadow(opaqueObjects);
+        }
+    }
+
+    #updateSelectMeshScale(camera) {
+        for (const obj of this.#celestialObjects) {
+            obj.updateSelectMeshScale(camera);
+        }
+    }
+
+    #updateMeshScale(camera) {
+        for (const obj of this.#celestialObjects) {
+            obj.updateMeshScale(camera);
         }
     }
 }
