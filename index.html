@@ -35,16 +35,18 @@
             .dropdown:hover .dropdowncontent {
                 display: block;
             }
-            
+            .flatpickr-calendar {
+            	width: 300px;
+        	}	
             
 		</style>
 	</head>
 	<body>
 		<div style="position: absolute;left: 50%;transform: translate(-50%);display: flex;justify-content: center; flex-direction: column; margin-top: 10px; row-gap: 10px;">
 			<div>
-				<button id="showPickerButton" >设定时间</button>
-				<div id="pickerContainer" style="display: none; position: absolute; z-index: 1;">
-					<input type="text" id="datetimePicker">
+				<button id="showPickerButton">设定时间</button>
+				<div id="pickerContainer" style="display: none; position: absolute; z-index: 1;width: 300px; background-color: white; padding: 10px; display: flex; flex-direction: column;">
+					<input type="text" id="datetimePicker" style="width: 292px; text-align: center;">
 				</div>
 				<div class="dropdown">
 					<button class="dropdownbutton">视角切换</button>
