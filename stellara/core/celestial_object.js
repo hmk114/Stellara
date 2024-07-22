@@ -67,6 +67,8 @@ class CelestialObject {
 
         this.#orbitMesh = new THREE.Line(new THREE.BufferGeometry(), this.#orbitMaterial);
         this.#selectMesh = new THREE.Mesh(this.#geometry, new THREE.MeshBasicMaterial({ opacity: 0.0, transparent: true }));
+    
+        this.#mesh.name = this.#selectMesh.name = this.#name;
     }
 
     #updateMeshGroup() {
@@ -167,7 +169,7 @@ class CelestialObject {
         };
     }
 
-    updatePosition(scene, camera, jd, basePosition) {
+    updatePosition(scene, jd, basePosition) {
         // calculate the position of the object
         const [baseX, baseY, baseZ] = basePosition;
         const position = this.#positionAtTime(jd);
@@ -188,23 +190,29 @@ class CelestialObject {
             this.#orbitMesh.geometry = orbitGeometry;
         }
 
-
         // apply rotation
         const { axis, angle } = this.#rotationAtTime(jd);
-        this.#mesh.setRotationFromAxisAngle(axis, angle);
+        this.#mesh.setRotationFromAxisAngle(axis, angle);        
 
-        // set scale
-        const minAngularRadius = 0.002;
-        const dis = camera.position.distanceTo(this.#mesh.position);
+        for (const child of this.#children) {
+            child.updatePosition(scene, jd, [x, y, z]);
+        }
+    }
+
+    #updateMeshScaleImpl(camera, mesh, minAngularRadius) {
+        const dis = camera.position.distanceTo(mesh.position);
         const realAngularRadius = Math.atan(this.radius / dis);
         const scale = Math.max(minAngularRadius / realAngularRadius, 1);
 
-        // this.#mesh.scale.setScalar(scale);
-        // this.#selectMesh.scale.setScalar(scale * 10);
+        mesh.scale.setScalar(scale);
+    }
 
-        for (const child of this.#children) {
-            child.updatePosition(scene, camera, jd, [x, y, z]);
-        }
+    updateMeshScale(camera) {
+        this.#updateMeshScaleImpl(camera, this.#mesh, 0.002);
+    }
+
+    updateSelectMeshScale(camera) {
+        this.#updateMeshScaleImpl(camera, this.#selectMesh, 0.05);
     }
 
     updateShadow(opaqueObjects) {
@@ -226,7 +234,5 @@ class CelestialObject {
         this.#mesh.material = this.#materials[index];
     }
 }
-
-
 
 export { CelestialObject };

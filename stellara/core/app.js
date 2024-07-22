@@ -6,6 +6,7 @@ import { convertToJulianDate } from './time.js';
 import { radii } from './solar_system_data.js';
 
 // init number : 86400
+
 let initTimeSpeed = 8640;
 let currentTimeSpeed = initTimeSpeed;
 
@@ -49,7 +50,6 @@ class Application {
         this.#rendererAux.shadowMap.needsUpdate = true;
         this.#rendererAux.shadowMap.type = THREE.PCFSoftShadowMap;
         // this.#rendererAux.autoClear = false;
-
 
         this.#raycaster = new THREE.Raycaster();
 
@@ -400,7 +400,8 @@ class Application {
         document.getElementById('timespeed').innerText = 'Time Speed: *' + (currentTimeSpeed / initTimeSpeed >= 1 ? currentTimeSpeed / initTimeSpeed : '1/' + initTimeSpeed / currentTimeSpeed);
 
         const jd = convertToJulianDate(this.#currentTime);
-        this.#celestialObjects[1].updatePosition(this.#scene, this.#camera, jd, [0, 0, 0]);
+        this.#celestialObjects[0].updatePosition(this.#scene, jd, [0, 0, 0]);
+        this.#updateShadow();
 
         this.#controls.target = this.#centerObject.position;
         this.#controls.trackTarget();
@@ -428,8 +429,12 @@ class Application {
             // this.#cameraAux.up.set(0, 0, 1);
         }
 
-        this.#updateShadow();
+        this.#updateSelectMeshScale(this.#camera);
+        this.#updateMeshScale(this.#camera);
         this.#renderer.render(this.#scene, this.#camera);
+
+//         this.#updateMeshScale(this.#cameraAux);
+//         this.#rendererAux.render(this.#scene, this.#cameraAux);
 
     }
 
@@ -439,6 +444,18 @@ class Application {
 
         for (const obj of shadowReceivingObjects) {
             obj.updateShadow(opaqueObjects);
+        }
+    }
+
+    #updateSelectMeshScale(camera) {
+        for (const obj of this.#celestialObjects) {
+            obj.updateSelectMeshScale(camera);
+        }
+    }
+
+    #updateMeshScale(camera) {
+        for (const obj of this.#celestialObjects) {
+            obj.updateMeshScale(camera);
         }
     }
 }
