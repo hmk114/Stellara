@@ -173,7 +173,7 @@ function CreateSunMaterials() {
     return [
         new MeshStandardMaterial({
             map: new TextureLoader().load('stellara/assets/texture/sun.jpg'),
-            emissive: new Color(0xd3480a),
+            emissive: new Color(0xffffe0),
             emissiveIntensity: 1
         })
     ];

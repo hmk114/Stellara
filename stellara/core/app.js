@@ -49,7 +49,6 @@ class Application {
         this.#rendererAux.shadowMap.autoUpdate = true;
         this.#rendererAux.shadowMap.needsUpdate = true;
         this.#rendererAux.shadowMap.type = THREE.PCFSoftShadowMap;
-        // this.#rendererAux.autoClear = false;
 
         this.#raycaster = new THREE.Raycaster();
 
@@ -130,9 +129,9 @@ class Application {
             this.#camera.updateProjectionMatrix();
             this.#renderer.setSize(window.innerWidth, window.innerHeight);
 
-            // this.#rendererAux.setSize(container.clientWidth, container.clientHeight);
-            // this.#cameraAux.aspect = container.clientWidth / container.clientHeight;
-            // this.#cameraAux.updateProjectionMatrix();
+            this.#rendererAux.setSize(container.clientWidth, container.clientHeight);
+            this.#cameraAux.aspect = container.clientWidth / container.clientHeight;
+            this.#cameraAux.updateProjectionMatrix();
         });
 
         window.addEventListener('click', e => {
@@ -408,8 +407,6 @@ class Application {
         this.#controls.update();
 
         // this.#cameraAux.position.set(this.#camera.position.x, this.#camera.position.y, this.#camera.position.z);
-
-        // TODO: 阴影问题：是因为自定义材料会导致渲染顺序问题！
         if (this.#isShown) {
             let vector = new THREE.Vector3();
             vector.subVectors(this.#centerObject.position, this.#celestialObjects[0].position);
@@ -418,16 +415,10 @@ class Application {
             } else if (this.#centerObject === this.#celestialObjects[2]) {
                 vector = vector.multiplyScalar(1 - (radii.moon / vector.length()) - 0.0001).add(this.#celestialObjects[0].position);
             }
-            // console.log(vector);
-            // console.log(this.#centerObject.position);
             this.#cameraAux.position.set(vector.x, vector.y, vector.z);
-            // this.#cameraAux.position.set(this.#centerObject.position.x, this.#centerObject.position.y, this.#centerObject.position.z);
             this.#cameraAux.lookAt(this.#celestialObjects[0].position);
             this.#rendererAux.render(this.#scene, this.#cameraAux);
-        } else{
-            // this.#cameraAux.position.set(1.2, 1, 1.3);
-            // this.#cameraAux.up.set(0, 0, 1);
-        }
+        } 
 
         this.#updateSelectMeshScale(this.#camera);
         this.#updateMeshScale(this.#camera);
@@ -435,7 +426,6 @@ class Application {
 
 //         this.#updateMeshScale(this.#cameraAux);
 //         this.#rendererAux.render(this.#scene, this.#cameraAux);
-
     }
 
     #updateShadow() {
