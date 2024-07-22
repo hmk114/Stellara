@@ -230,12 +230,12 @@ class Application {
                 container.style.opacity = '100';
             }
             this.#centerObject = this.#celestialObjects[1];
-            this.#currentTime = new Date("2023-04-20 05:00:00");
+            this.#currentTime = new Date("2024-04-08 18:00:00");
             this.animate();
 
-            this.#camera.position.x = this.#centerObject.position.x + 0.0003;
-            this.#camera.position.y = this.#centerObject.position.y + 0.0003;
-            this.#camera.position.z = 0;
+            this.#camera.position.x = this.#centerObject.position.x + 0.0002;
+            this.#camera.position.y = this.#centerObject.position.y + 0.0001;
+            this.#camera.position.z = 0.0003;
 
             this.#cameraAux.position.x = this.#centerObject.position.x;
             this.#cameraAux.position.y = this.#centerObject.position.y;
@@ -258,12 +258,12 @@ class Application {
                 container.style.opacity = '100';
             }
             this.#centerObject = this.#celestialObjects[1];
-            this.#currentTime = new Date("2025-03-29 10:00:00");
+            this.#currentTime = new Date("2023-04-20 05:00:00");
             this.animate();
 
-            this.#camera.position.x = this.#centerObject.position.x + 0.0002;
-            this.#camera.position.y = this.#centerObject.position.y + 0.0001;
-            this.#camera.position.z = 0.0003;
+            this.#camera.position.x = this.#centerObject.position.x + 0.0003;
+            this.#camera.position.y = this.#centerObject.position.y + 0.0003;
+            this.#camera.position.z = 0;
 
             this.#cameraAux.position.x = this.#centerObject.position.x;
             this.#cameraAux.position.y = this.#centerObject.position.y;
