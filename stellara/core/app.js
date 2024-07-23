@@ -9,7 +9,6 @@ import { radii } from './solar_system_data.js';
 
 let initTimeSpeed = 8640;
 let currentTimeSpeed = initTimeSpeed;
-let date = [];
 
 class Application {
     #scene;
@@ -20,7 +19,6 @@ class Application {
 
     #rendererAux;
     #cameraAux;
-    #controlsAux;
 
     #celestialObjects;
 
@@ -103,20 +101,6 @@ class Application {
             this.object.position.add(targetPositionDelta);
         };
 
-        // this.#controlsAux = new OrbitControls(this.#cameraAux, this.#rendererAux.domElement);
-        // this.#controlsAux.enableDamping = true;
-        // this.#controlsAux.dampingFactor = 0.1;
-
-        // this.#controlsAux.trackTarget = function () {
-        //     if (!this.targetLastPosition) {
-        //         this.targetLastPosition = this.target.clone();
-        //         return;
-        //     }
-        //     const targetPositionDelta = this.target.clone().sub(this.targetLastPosition);
-        //     this.targetLastPosition = this.target.clone();
-        //     this.object.position.add(targetPositionDelta);
-        // }
-
         // this.currentTime = new Date();
         this.#currentTime = new Date("2024-10-03 02:30:00");
         this.#timeSpeed = initTimeSpeed;
@@ -196,12 +180,12 @@ class Application {
         });
 
         eventBus.subscribe('TwotimesSpeed', () => {
-            currentTimeSpeed *= 2;
+            currentTimeSpeed = Math.min(currentTimeSpeed * 2, initTimeSpeed * 1024);
             this.#timeSpeed = currentTimeSpeed;
         });
 
         eventBus.subscribe('HalfSpeed', () => {
-            currentTimeSpeed *= 0.5;
+            currentTimeSpeed = Math.max(currentTimeSpeed * 0.5, initTimeSpeed * 1 / 1024);
             this.#timeSpeed = currentTimeSpeed;
         });
 
@@ -219,16 +203,18 @@ class Application {
             }
         });
 
+        let timeout;
         eventBus.subscribe('totalSolarEclipse', () => {
             this.#isShown = true;
             var container = document.getElementById('container');
-            var computedStyle = window.getComputedStyle(container);
-            if (computedStyle.opacity === '0') {
-                container.style.opacity = '1';
+            if (timeout) {
+                clearTimeout(timeout);
+            }
+            if (container.style.opacity === '0') {
+                container.style.opacity = '100';
             }
             this.#centerObject = this.#celestialObjects[1];
             this.#currentTime = new Date("2024-04-08 18:00:00");
-            date.push(this.#currentTime);
             this.animate();
 
             this.#camera.position.x = this.#centerObject.position.x + 0.0002;
@@ -240,18 +226,23 @@ class Application {
             this.#cameraAux.position.z = this.#centerObject.position.z;
             this.#cameraAux.fov = 5;
             this.#cameraAux.updateProjectionMatrix();
+            timeout = setTimeout(() => {
+                document.getElementById('container').style.opacity = '0';
+                this.#isShown = false;
+            }, 8000);
         });
 
         eventBus.subscribe('partialSolarEclipse', () => {
             this.#isShown = true;
             var container = document.getElementById('container');
-            var computedStyle = window.getComputedStyle(container);
-            if (computedStyle.opacity === '0') {
-                container.style.opacity = '1';
+            if (timeout) {
+                clearTimeout(timeout);
+            }
+            if (container.style.opacity === '0') {
+                container.style.opacity = '100';
             }
             this.#centerObject = this.#celestialObjects[1];
             this.#currentTime = new Date("2023-04-20 05:00:00");
-            date.push(this.#currentTime);
             this.animate();
 
             this.#camera.position.x = this.#centerObject.position.x + 0.0003;
@@ -263,18 +254,23 @@ class Application {
             this.#cameraAux.position.z = this.#centerObject.position.z;
             this.#cameraAux.fov = 5;
             this.#cameraAux.updateProjectionMatrix();
+            timeout = setTimeout(() => {
+                document.getElementById('container').style.opacity = '0';
+                this.#isShown = false;
+            }, 8000);
         });
 
         eventBus.subscribe('annularSolarEclipse', () => {
             this.#isShown = true;
             var container = document.getElementById('container');
-            var computedStyle = window.getComputedStyle(container);
-            if (computedStyle.opacity === '0') {
-                container.style.opacity = '1';
+            if (timeout) {
+                clearTimeout(timeout);
+            }
+            if (container.style.opacity === '0') {
+                container.style.opacity = '100';
             }
             this.#centerObject = this.#celestialObjects[1];
             this.#currentTime = new Date("2024-10-02 15:00:00");
-            date.push(this.#currentTime);
             this.animate();
 
             this.#camera.position.x = this.#centerObject.position.x - 0.0004;
@@ -286,18 +282,23 @@ class Application {
             this.#cameraAux.position.z = this.#centerObject.position.z;
             this.#cameraAux.fov = 5;
             this.#cameraAux.updateProjectionMatrix();
+            timeout = setTimeout(() => {
+                document.getElementById('container').style.opacity = '0';
+                this.#isShown = false;
+            }, 8000);
         });
 
         eventBus.subscribe('totalLunarEclipse', () => {
-            this.#isShown = true;
             var container = document.getElementById('container');
-            var computedStyle = window.getComputedStyle(container);
-            if (computedStyle.opacity === '0') {
-                container.style.opacity = '1';
+            this.#isShown = true;
+            if (timeout) {
+                clearTimeout(timeout);
+            }
+            if (container.style.opacity === '0') {
+                container.style.opacity = '100';
             }
             this.#centerObject = this.#celestialObjects[2];
             this.#currentTime = new Date("2025-03-14 05:00:00");
-            date.push(this.#currentTime);
             this.animate();
 
             this.#camera.position.x = this.#centerObject.position.x + 0.0001;
@@ -309,18 +310,23 @@ class Application {
             this.#cameraAux.position.z = this.#centerObject.position.z;
             this.#cameraAux.fov = 5;
             this.#cameraAux.updateProjectionMatrix();
+            timeout = setTimeout(() => {
+                document.getElementById('container').style.opacity = '0';
+                this.#isShown = false;
+            }, 8000);
         });
 
         eventBus.subscribe('partialLunarEclipse', () => {
-            this.#isShown = true;
             var container = document.getElementById('container');
-            var computedStyle = window.getComputedStyle(container);
-            if (computedStyle.opacity === '0') {
-                container.style.opacity = '1';
+            this.#isShown = true;
+            if (timeout) {
+                clearTimeout(timeout);
+            }
+            if (container.style.opacity === '0') {
+                container.style.opacity = '100';
             }
             this.#centerObject = this.#celestialObjects[2];
             this.#currentTime = new Date("2024-09-18 05:00:00");
-            date.push(this.#currentTime);
             this.animate();
 
             this.#camera.position.x = this.#centerObject.position.x - 0.0001;
@@ -332,18 +338,23 @@ class Application {
             this.#cameraAux.position.z = this.#centerObject.position.z;
             this.#cameraAux.fov = 5;
             this.#cameraAux.updateProjectionMatrix();
+            timeout = setTimeout(() => {
+                document.getElementById('container').style.opacity = '0';
+                this.#isShown = false;
+            }, 8000);
         });
 
         eventBus.subscribe('annularLunarEclipse', () => {
-            this.#isShown = true;
             var container = document.getElementById('container');
-            var computedStyle = window.getComputedStyle(container);
-            if (computedStyle.opacity === '0') {
-                container.style.opacity = '1';
+            this.#isShown = true;
+            if (timeout) {
+                clearTimeout(timeout);
+            }
+            if (container.style.opacity === '0') {
+                container.style.opacity = '100';
             }
             this.#centerObject = this.#celestialObjects[2];
             this.#currentTime = new Date("2023-05-05 10:00:00");
-            date.push(this.#currentTime);
             this.animate();
 
             this.#camera.position.x = this.#centerObject.position.x + 0.00005;
@@ -355,6 +366,10 @@ class Application {
             this.#cameraAux.position.z = this.#centerObject.position.z;
             this.#cameraAux.fov = 5;
             this.#cameraAux.updateProjectionMatrix();
+            timeout = setTimeout(() => {
+                document.getElementById('container').style.opacity = '0';
+                this.#isShown = false;
+            }, 8000);
         });
     }
 
@@ -375,22 +390,6 @@ class Application {
         this.#controls.target = this.#centerObject.position;
         this.#controls.trackTarget();
         this.#controls.update();
-
-        let isWithinTimeRange = date.some(date => {
-            let datePlus16Hours = new Date(date);
-            datePlus16Hours.setHours(datePlus16Hours.getHours() + 16);
-
-            let datePlus18Hours = new Date(date);
-            datePlus18Hours.setHours(datePlus18Hours.getHours() + 18);
-
-            return this.#currentTime >= datePlus16Hours && this.#currentTime <= datePlus18Hours;
-        });
-        if(isWithinTimeRange)
-        {
-            this.#isShown = false;
-            var container = document.getElementById('container');
-            container.style.opacity = '0';
-        }
 
         // this.#cameraAux.position.set(this.#camera.position.x, this.#camera.position.y, this.#camera.position.z);
         if (this.#isShown) {

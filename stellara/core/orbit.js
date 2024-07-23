@@ -92,7 +92,7 @@ class EarthOrbit extends Orbit {
     #lastTime;
 
     rangeLow = this.#numPoints * -0.3;
-    rangeHigh = this.#numPoints * 0.5;
+    rangeHigh = this.#numPoints * 0.7;
 
     constructor() {
         super();
@@ -164,7 +164,7 @@ class MoonOrbit extends Orbit {
     #lastTime;
 
     rangeLow = this.#numPoints * -0.3;
-    rangeHigh = this.#numPoints * 0.4;
+    rangeHigh = this.#numPoints * 0.7;
 
     constructor() {
         super();

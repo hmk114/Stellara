@@ -1,84 +1,82 @@
 <!DOCTYPE html>
 <html lang="en">
-	<head>
-		<meta charset="utf-8">
-		<title>My first three.js app</title>
-		<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/flatpickr/dist/flatpickr.min.css">
-		<link rel="stylesheet" href="style.css">
-	</head>
-	<body>
-		<div id="CenteredFlexColumn">
-			<div>
-				<button id="showPickerButton">设定时间</button>
-				<div id="pickerContainer">
-					<input type="text" id="datetimePicker">
-				</div>
-				<div class="dropdown">
-					<button class="dropdownbutton">视角切换</button>
-					<div class="dropdowncontent">
-						<a id="ViewSwitchingEarth">地球</a>
-						<a id="ViewSwitchingMoon">月球</a>
-						<a id="ViewSwitchingSun">太阳</a>
-					</div>
-				</div>
-				<div class="dropdown">
-					<button class="dropdownbutton">视图切换</button>
-					<div class="dropdowncontent">
-						<a id="TopView">俯视</a>
-						<a id="SideView">侧视</a>
-						<a id="3DView">3D模式</a>
-					</div>
-				</div>
-				<button id="EarthTransformation">地球换肤</button>
+
+<head>
+	<meta charset="utf-8">
+	<title>My first three.js app</title>
+	<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/flatpickr/dist/flatpickr.min.css">
+	<link rel="stylesheet" href="./stellara/css/style.css">
+</head>
+
+<body>
+	<div id="CenteredFlexColumn">
+		<div>
+			<button id="showPickerButton">设定时间</button>
+			<div id="pickerContainer">
+				<input type="text" id="datetimePicker">
 			</div>
-
-			<div class="TimeSpeed">
-                <button id="HalfSpeed">
-                    <svg width="16" height="16" viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg">
-                        <path d="M16 2L2 10L16 16V4Z" fill="black"/>
-                    </svg>                    
-                </button>
-                <button id="Stop">
-                    <svg width="16" height="16" viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg">
-                        <rect x="3" y="4" width="10" height="10" fill="black"/>
-                    </svg>
-                </button>
-                <button id="TwotimesSpeed">
-                    <svg width="16" height="16" viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg">
-                        <path d="M0 2L14 10L0 16V4Z" fill="black"/>
-                    </svg>
-                </button>
-                <button id="ReturnSpeed">初始速度</button>
-            </div>
-
-			<div class="Astronomy">
-				<div class="dropdown">
-					<button class="dropdownbutton">日食</button>
-					<div class="dropdowncontent">
-						<a id="totalSolarEclipse">日全食</a>
-						<a id="partialSolarEclipse">日偏食</a>
-						<a id="annularSolarEclipse">日环食</a>
-					</div>
-				</div>
-				<div class="dropdown">
-					<button class="dropdownbutton">月食</button>
-					<div class="dropdowncontent">
-						<a id="totalLunarEclipse">月全食</a>
-						<a id="partialLunarEclipse">月偏食</a>
-						<a id="annularLunarEclipse">半影月食</a>
-					</div>
+			<div class="dropdown">
+				<button class="dropdownbutton">视角切换</button>
+				<div class="dropdowncontent">
+					<a id="ViewSwitchingEarth">地球</a>
+					<a id="ViewSwitchingMoon">月球</a>
+					<a id="ViewSwitchingSun">太阳</a>
 				</div>
 			</div>
-
+			<div class="dropdown">
+				<button class="dropdownbutton">视图切换</button>
+				<div class="dropdowncontent">
+					<a id="TopView">俯视</a>
+					<a id="SideView">侧视</a>
+					<a id="3DView">3D模式</a>
+				</div>
+			</div>
+			<button id="EarthTransformation">地球换肤</button>
 		</div>
 
+		<div class="TimeSpeed">
+			<button id="HalfSpeed">
+				<svg width="16" height="16" viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg">
+					<path d="M16 2L2 10L16 16V4Z" fill="black" />
+				</svg>
+			</button>
+			<button id="Stop">
+				<svg width="16" height="16" viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg">
+					<rect x="3" y="4" width="10" height="10" fill="black" />
+				</svg>
+			</button>
+			<button id="TwotimesSpeed">
+				<svg width="16" height="16" viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg">
+					<path d="M0 2L14 10L0 16V4Z" fill="black" />
+				</svg>
+			</button>
+			<button id="ReturnSpeed">初始速度</button>
+		</div>
 
-        <div id = "nowtime"></div>
-        <div id = "timespeed"></div>
+		<div class="Astronomy">
+			<div class="dropdown">
+				<button class="dropdownbutton">日食</button>
+				<div class="dropdowncontent">
+					<a id="totalSolarEclipse">日全食</a>
+					<a id="partialSolarEclipse">日偏食</a>
+					<a id="annularSolarEclipse">日环食</a>
+				</div>
+			</div>
+			<div class="dropdown">
+				<button class="dropdownbutton">月食</button>
+				<div class="dropdowncontent">
+					<a id="totalLunarEclipse">月全食</a>
+					<a id="partialLunarEclipse">月偏食</a>
+					<a id="annularLunarEclipse">半影月食</a>
+				</div>
+			</div>
+		</div>
+	</div>
+	<div id="nowtime"></div>
+	<div id="timespeed"></div>
+	<div id="container"></div>
+	<script type="module" src="/main.js"></script>
+	<script src="./stellara/assets/cdn/flatpickr.js"></script>
+</body>
 
-		<div id = "container"></div>
-		
-		<script type="module" src="/main.js"></script>
-		<script src="https://cdn.jsdelivr.net/npm/flatpickr"></script>
-	</body>
 </html>
