@@ -16,8 +16,8 @@ npx vite
 .
 ├── README.md
 ├── index.html
-├── main.js
 ├── stellara
+│   ├── main.js
 │   ├── core
 │   │   ├── app.js
 │   │   ├── celestial_object.js
@@ -27,16 +27,16 @@ npx vite
 │   │   └── shader_patcher.js
 │   │   └── solar_system_data.js
 │   │   └── solar_system_objects.js
-│   ├── css
-│   │   ├── style.css
 │   └── assets
 │       ├── texture
 │       │   ├── earth.jpg
 │       │   ├── earth_water.jpg
 │       │   ├── moon.jpg
 │       │   ├── sun.jpg
-│       ├── cdn
+│       ├── dependency
 │       │   ├── flatpickr.js
+│       ├── css
+│       │   ├── style.css
 ```
 
 ## 二、实现思路

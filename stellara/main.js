@@ -1,7 +1,7 @@
 'use strict';
 
-import Application from './stellara/core/app.js';
-import solarSystemObjects from './stellara/core/solar_system_objects.js';
+import Application from './core/app.js';
+import solarSystemObjects from './core/solar_system_objects.js';
 
 class EventBus {
     constructor() {

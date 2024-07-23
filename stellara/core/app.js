@@ -381,7 +381,7 @@ class Application {
             document.getElementById("nowtime").innerText = this.#currentTime.toLocaleString();
         }
         this.#lastRenderTime = new Date();
-        document.getElementById('timespeed').innerText = 'Time Speed: *' + (currentTimeSpeed / initTimeSpeed >= 1 ? currentTimeSpeed / initTimeSpeed : '1/' + initTimeSpeed / currentTimeSpeed);
+        document.getElementById('timespeed').innerText = 'Time Speed: ×' + (currentTimeSpeed / initTimeSpeed >= 1 ? currentTimeSpeed / initTimeSpeed : '1/' + initTimeSpeed / currentTimeSpeed);
 
         const jd = convertToJulianDate(this.#currentTime);
         this.#celestialObjects[0].updatePosition(this.#scene, jd, [0, 0, 0]);
