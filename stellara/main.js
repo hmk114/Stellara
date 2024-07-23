@@ -1,7 +1,7 @@
 'use strict';
 
-import Application from './stellara/core/app.js';
-import solarSystemObjects from './stellara/core/solar_system_objects.js';
+import Application from './core/app.js';
+import solarSystemObjects from './core/solar_system_objects.js';
 
 class EventBus {
     constructor() {
@@ -58,15 +58,6 @@ document.getElementById("totalLunarEclipse").addEventListener('click', () => eve
 document.getElementById("partialLunarEclipse").addEventListener('click', () => eventBus.publish('partialLunarEclipse'));
 document.getElementById("annularLunarEclipse").addEventListener('click', () => eventBus.publish('annularLunarEclipse'));
 
-document.getElementById('showPickerButton').addEventListener('click', function() {
-    var pickerContainer = document.getElementById('pickerContainer');
-    if (pickerContainer.style.display === 'none') {
-        pickerContainer.style.display = 'block';
-    } else {
-        pickerContainer.style.display = 'none';
-    }
-
-});
 flatpickr("#datetimePicker", {
     inline: true,
     enableTime: true,

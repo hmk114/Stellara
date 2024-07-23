@@ -44,8 +44,18 @@ body { margin: 0; }
     width: 300px; 
     background-color: white; 
     padding: 10px; 
-    display: flex; 
+    position: absolute;
+    display: none; 
     flex-direction: column;
+    z-index: 1;
+}
+
+#showPickerButton:hover + #pickerContainer{
+    display: flex;
+}
+
+#pickerContainer:hover{
+    display: flex;
 }
 
 #datetimePicker{

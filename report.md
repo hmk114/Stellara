@@ -16,8 +16,8 @@ npx vite
 .
 ├── README.md
 ├── index.html
-├── main.js
 ├── stellara
+│   ├── main.js
 │   ├── core
 │   │   ├── app.js
 │   │   ├── celestial_object.js
@@ -33,6 +33,10 @@ npx vite
 │       │   ├── earth_water.jpg
 │       │   ├── moon.jpg
 │       │   ├── sun.jpg
+│       ├── dependency
+│       │   ├── flatpickr.js
+│       ├── css
+│       │   ├── style.css
 ```
 
 ## 二、实现思路
@@ -76,7 +80,28 @@ css...
 
 ## 三、实现效果
 
-## 四、参考资料
+放一些图片
+
+## 四、实现难点
+
+### 4.1 贴图对齐
+
+### 4.2 重写渲染器
+
+### 4.3 多相机渲染
+
+## 五、分工情况
+
+本项目采用git进行版本控制，分工如下：
+
+- 贾泽林：负责项目框架搭建、运动控制、场景搭建、渲染逻辑、文档编写
+- 姚汝昌：负责贴图渲染、场景搭建、轨道控制、文档编写
+- 韩枢辰：负责页面交互控制、日食月食展示、文档编写
+- 伍圣贤：负责星体页面设计、文档编写
+
+
+
+## 六、参考资料
 
 - [Three.js](https://threejs.org/)
 - [Three.js Examples](https://threejs.org/examples/)
@@ -84,3 +109,4 @@ css...
 - [Celestia](https://celestiaproject.space/)
 - [NASA Orbit Viewer](https://ssd.jpl.nasa.gov/tools/orbit_viewer.html)
 - [Planet Texture Maps](https://planetpixelemporium.com/earth.html)
+- [flatpickr](https://flatpickr.js.org/)
