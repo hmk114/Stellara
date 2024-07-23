@@ -1,7 +1,6 @@
 'use strict';
 
 import * as THREE from 'three';
-import { update } from 'three/examples/jsm/libs/tween.module.js';
 
 class CelestialObject {
     #name;

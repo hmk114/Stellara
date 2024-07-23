@@ -156,7 +156,7 @@ class EarthOrbit extends Orbit {
 class MoonOrbit extends Orbit {
 
     #orbitPoints = [];
-    #numPoints = 200;
+    #numPoints = 500;
     #total = 27.32;
     #dt = this.#total / this.#numPoints;
     #prevHead;
