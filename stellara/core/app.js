@@ -207,10 +207,11 @@ class Application {
         eventBus.subscribe('totalSolarEclipse', () => {
             this.#isShown = true;
             var container = document.getElementById('container');
+            var computedstyle = window.getComputedStyle(container);
             if (timeout) {
                 clearTimeout(timeout);
             }
-            if (container.style.opacity === '0') {
+            if (computedstyle.opacity === '0') {
                 container.style.opacity = '100';
             }
             this.#centerObject = this.#celestialObjects[1];
@@ -235,10 +236,11 @@ class Application {
         eventBus.subscribe('partialSolarEclipse', () => {
             this.#isShown = true;
             var container = document.getElementById('container');
+            var computedstyle = window.getComputedStyle(container);
             if (timeout) {
                 clearTimeout(timeout);
             }
-            if (container.style.opacity === '0') {
+            if (computedstyle.opacity === '0') {
                 container.style.opacity = '100';
             }
             this.#centerObject = this.#celestialObjects[1];
@@ -263,10 +265,11 @@ class Application {
         eventBus.subscribe('annularSolarEclipse', () => {
             this.#isShown = true;
             var container = document.getElementById('container');
+            var computedstyle = window.getComputedStyle(container);
             if (timeout) {
                 clearTimeout(timeout);
             }
-            if (container.style.opacity === '0') {
+            if (computedstyle.opacity === '0') {
                 container.style.opacity = '100';
             }
             this.#centerObject = this.#celestialObjects[1];
@@ -289,12 +292,13 @@ class Application {
         });
 
         eventBus.subscribe('totalLunarEclipse', () => {
-            var container = document.getElementById('container');
             this.#isShown = true;
+            var container = document.getElementById('container');
+            var computedstyle = window.getComputedStyle(container);
             if (timeout) {
                 clearTimeout(timeout);
             }
-            if (container.style.opacity === '0') {
+            if (computedstyle.opacity === '0') {
                 container.style.opacity = '100';
             }
             this.#centerObject = this.#celestialObjects[2];
@@ -317,12 +321,13 @@ class Application {
         });
 
         eventBus.subscribe('partialLunarEclipse', () => {
-            var container = document.getElementById('container');
             this.#isShown = true;
+            var container = document.getElementById('container');
+            var computedstyle = window.getComputedStyle(container);
             if (timeout) {
                 clearTimeout(timeout);
             }
-            if (container.style.opacity === '0') {
+            if (computedstyle.opacity === '0') {
                 container.style.opacity = '100';
             }
             this.#centerObject = this.#celestialObjects[2];
@@ -345,12 +350,13 @@ class Application {
         });
 
         eventBus.subscribe('annularLunarEclipse', () => {
-            var container = document.getElementById('container');
             this.#isShown = true;
+            var container = document.getElementById('container');
+            var computedstyle = window.getComputedStyle(container);
             if (timeout) {
                 clearTimeout(timeout);
             }
-            if (container.style.opacity === '0') {
+            if (computedstyle.opacity === '0') {
                 container.style.opacity = '100';
             }
             this.#centerObject = this.#celestialObjects[2];
