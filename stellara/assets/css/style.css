@@ -68,6 +68,11 @@ body { margin: 0; }
     justify-content: center;
 }
 
+#ReturnSpeed{
+    position: relative;
+    left: 5px;
+}
+
 .Astronomy{
     display: flex; 
     justify-content: center;
