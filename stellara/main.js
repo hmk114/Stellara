@@ -2,6 +2,8 @@
 
 import Application from './core/app.js';
 import solarSystemObjects from './core/solar_system_objects.js';
+import flatpickr from 'flatpickr';
+import 'flatpickr/dist/flatpickr.css';
 
 class EventBus {
     constructor() {

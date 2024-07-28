@@ -10,6 +10,7 @@
   "author": "",
   "license": "ISC",
   "dependencies": {
+    "flatpickr": "^4.6.13",
     "three": "^0.166.1"
   },
   "devDependencies": {
