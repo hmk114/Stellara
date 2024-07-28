@@ -124,40 +124,47 @@ function CreateMoonGeometry() {
 
 class MeshStandardMaterialPatched extends MeshStandardMaterial {
     #maxNumOpaqueObjectsInScene;
+    #references;
 
     constructor(parameters, maxNumOpaqueObjectsInScene = 0) {
         super(parameters);
         this.#maxNumOpaqueObjectsInScene = maxNumOpaqueObjectsInScene;
 
-        const shader = ShaderLib["physical"];
-
-        // Redefine material's type to avoid using the original shader
-        this.type = 'MeshStandardMaterialPatched';
         this.defines = { ...this.defines, MAX_NUM_OPAQUE_OBJECTS_IN_SCENE: maxNumOpaqueObjectsInScene };
-        this.vertexShader = vertexShaderPatcher(shader.vertexShader);
-        this.fragmentShader = fragmentShaderPatcher(shader.fragmentShader);
-        this.uniforms = UniformsUtils.merge([
+        this.#references = [];
+    }
+
+    onBeforeCompile(shader, renderer) {
+        shader.vertexShader = vertexShaderPatcher(shader.vertexShader);
+        shader.fragmentShader = fragmentShaderPatcher(shader.fragmentShader);
+        shader.uniforms = UniformsUtils.merge([
             shader.uniforms,
-            maxNumOpaqueObjectsInScene > 0 ? {
-                opaqueObjectPositions: { value: new Array(maxNumOpaqueObjectsInScene).fill(new Vector3()) },
-                opaqueObjectRadius: { value: new Array(maxNumOpaqueObjectsInScene).fill(0) },
+            this.#maxNumOpaqueObjectsInScene > 0 ? {
+                opaqueObjectPositions: { value: new Array(this.#maxNumOpaqueObjectsInScene).fill(new Vector3()) },
+                opaqueObjectRadius: { value: new Array(this.#maxNumOpaqueObjectsInScene).fill(0) },
                 numOpaqueObjectsInScene: { value: 0 }
             } : {}
         ]);
+        this.#references.push(shader);
     }
 
     updateShadowUniforms(opaqueObjects) {
         if (this.#maxNumOpaqueObjectsInScene === 0) return;
-
-        this.uniforms.numOpaqueObjectsInScene.value = opaqueObjects.length;
-        for (let i = 0; i < this.#maxNumOpaqueObjectsInScene; i++) {
-            if (i < opaqueObjects.length) {
-                this.uniforms.opaqueObjectPositions.value[i] = opaqueObjects[i].position;
-                this.uniforms.opaqueObjectRadius.value[i] = opaqueObjects[i].radius;
-            } else {
-                this.uniforms.opaqueObjectPositions.value[i] = new Vector3();
-                this.uniforms.opaqueObjectRadius.value[i] = 0;
+        
+        for (const shader of this.#references) {
+            shader.uniforms.numOpaqueObjectsInScene.value = opaqueObjects.length;
+            for (let i = 0; i < this.#maxNumOpaqueObjectsInScene; i++) {
+                if (i < opaqueObjects.length) {
+                    shader.uniforms.opaqueObjectPositions.value[i] = opaqueObjects[i].position;
+                    shader.uniforms.opaqueObjectRadius.value[i] = opaqueObjects[i].radius;
+                } else {
+                    shader.uniforms.opaqueObjectPositions.value[i] = new Vector3();
+                    shader.uniforms.opaqueObjectRadius.value[i] = 0;
+                }
             }
+            shader.uniforms.numOpaqueObjectsInScene.needsUpdate = true;
+            shader.uniforms.opaqueObjectPositions.needsUpdate = true;
+            shader.uniforms.opaqueObjectRadius.needsUpdate = true;
         }
     }
 }
@@ -166,7 +173,7 @@ function CreateSunMaterials() {
     return [
         new MeshStandardMaterial({
             map: new TextureLoader().load('stellara/assets/texture/sun.jpg'),
-            emissive: new Color(0xd3480a),
+            emissive: new Color(0xffffe0),
             emissiveIntensity: 1
         })
     ];

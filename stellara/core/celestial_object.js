@@ -1,7 +1,6 @@
 'use strict';
 
 import * as THREE from 'three';
-import { update } from 'three/examples/jsm/libs/tween.module.js';
 
 class CelestialObject {
     #name;
@@ -12,7 +11,7 @@ class CelestialObject {
     #geometry;
     #materials;
     #orbitMaterial;
-    #curMaterialIndex;
+    curMaterialIndex;
 
     #visible;
     #showOrbit;
@@ -24,6 +23,7 @@ class CelestialObject {
     #mesh;
     #axisMesh;
     #orbitMesh;
+    #selectMesh; // a large invisible mesh for easier selection
     #meshGroup;
 
     constructor(name, children, orbit, rotation, geometry, materials, orbitMaterial, curMaterialIndex = 0, castShadow = true, receiveShadow = true) {
@@ -36,7 +36,7 @@ class CelestialObject {
         this.#geometry = geometry;
         this.#materials = materials;
         this.#orbitMaterial = orbitMaterial;
-        this.#curMaterialIndex = curMaterialIndex;
+        this.curMaterialIndex = curMaterialIndex;
 
         this.#visible = true;
         this.#showOrbit = true;
@@ -53,7 +53,7 @@ class CelestialObject {
     }
 
     #createMeshes() {
-        this.#mesh = new THREE.Mesh(this.#geometry, this.#materials[this.#curMaterialIndex]);
+        this.#mesh = new THREE.Mesh(this.#geometry, this.#materials[this.curMaterialIndex]);
 
         if (this.#rotation) {
             const delta = this.#rotation.getRotationAxis().multiplyScalar(this.#geometry.parameters.radius * 2);
@@ -65,6 +65,9 @@ class CelestialObject {
         }
 
         this.#orbitMesh = new THREE.Line(new THREE.BufferGeometry(), this.#orbitMaterial);
+        this.#selectMesh = new THREE.Mesh(this.#geometry, new THREE.MeshBasicMaterial({ opacity: 0.0, transparent: true }));
+    
+        this.#mesh.name = this.#selectMesh.name = this.#name;
     }
 
     #updateMeshGroup() {
@@ -83,6 +86,7 @@ class CelestialObject {
         updateMesh(this.#mesh, this.#visible);
         updateMesh(this.#axisMesh, this.#visible && this.#showRotationAxis);
         updateMesh(this.#orbitMesh, this.#visible && this.#showOrbit);
+        updateMesh(this.#selectMesh, true);
     }
 
     /**
@@ -134,6 +138,10 @@ class CelestialObject {
         return this.#meshGroup;
     }
 
+    get selectMesh() {
+        return this.#selectMesh;
+    }
+
     get position() {
         return this.#mesh.position.clone();
     }
@@ -160,7 +168,7 @@ class CelestialObject {
         };
     }
 
-    updatePosition(scene, camera, jd, basePosition) {
+    updatePosition(scene, jd, basePosition) {
         // calculate the position of the object
         const [baseX, baseY, baseZ] = basePosition;
         const position = this.#positionAtTime(jd);
@@ -168,10 +176,9 @@ class CelestialObject {
         const [x, y, z] = [position.x + baseX, position.y + baseY, position.z + baseZ];
         this.#mesh.position.set(x, y, z);
         this.#axisMesh.position.set(x, y, z);
+        this.#selectMesh.position.set(x, y, z);
 
-        // TODO: move into meshGroup
         // update orbit
-
         const orbitPoints = this.#orbit.orbitCurve(jd);
         if (orbitPoints.length !== 0) {
             for (let i = 0; i < orbitPoints.length; i++) {
@@ -182,21 +189,29 @@ class CelestialObject {
             this.#orbitMesh.geometry = orbitGeometry;
         }
 
-
         // apply rotation
         const { axis, angle } = this.#rotationAtTime(jd);
-        this.#mesh.setRotationFromAxisAngle(axis, angle);
-
-        // set scale
-        const minAngularRadius = 0.002;
-        const dis = camera.position.distanceTo(this.#mesh.position);
-        const realAngularRadius = Math.atan(this.radius / dis);
-
-        this.#mesh.scale.setScalar(Math.max(minAngularRadius / realAngularRadius, 1));
+        this.#mesh.setRotationFromAxisAngle(axis, angle);        
 
         for (const child of this.#children) {
-            child.updatePosition(scene, camera, jd, [x, y, z]);
+            child.updatePosition(scene, jd, [x, y, z]);
         }
+    }
+
+    #updateMeshScaleImpl(camera, mesh, minAngularRadius) {
+        const dis = camera.position.distanceTo(mesh.position);
+        const realAngularRadius = Math.atan(this.radius / dis);
+        const scale = Math.max(minAngularRadius / realAngularRadius, 1);
+
+        mesh.scale.setScalar(scale);
+    }
+
+    updateMeshScale(camera) {
+        this.#updateMeshScaleImpl(camera, this.#mesh, 0.002);
+    }
+
+    updateSelectMeshScale(camera) {
+        this.#updateMeshScaleImpl(camera, this.#selectMesh, 0.05);
     }
 
     updateShadow(opaqueObjects) {
@@ -214,11 +229,9 @@ class CelestialObject {
             return;
         }
 
-        this.#curMaterialIndex = index;
+        this.curMaterialIndex = index;
         this.#mesh.material = this.#materials[index];
     }
 }
-
-
 
 export { CelestialObject };

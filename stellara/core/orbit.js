@@ -3,7 +3,6 @@
 import { KM_PER_AU } from "./constants.js";
 import { Vector3 } from "three";
 import { vsop87_data } from "./solar_system_data.js";
-import { or } from "three/examples/jsm/nodes/Nodes.js";
 
 function sumSeries(series, t) {
     let x = 0.0;
@@ -93,7 +92,7 @@ class EarthOrbit extends Orbit {
     #lastTime;
 
     rangeLow = this.#numPoints * -0.3;
-    rangeHigh = this.#numPoints * 0.5;
+    rangeHigh = this.#numPoints * 0.7;
 
     constructor() {
         super();
@@ -120,6 +119,8 @@ class EarthOrbit extends Orbit {
     orbitCurve(jd) {
         if (this.#orbitPoints.length === 0) {
             this.#orbitPoints = this.orbitAtTime(jd);
+        } else if (Math.abs(jd - this.#lastTime) > this.#total / 3) {
+            this.#orbitPoints = this.orbitAtTime(jd);
         } else {
             if (jd > this.#lastTime) {
                 const now_head = jd + this.rangeLow * this.#dt;
@@ -144,18 +145,18 @@ class EarthOrbit extends Orbit {
                     this.#prevHead -= this.#dt;
                 }
             }
-           
         }
+        this.#lastTime = jd;
         const PointsCopy = this.#orbitPoints.slice();
         return PointsCopy;
     }
-    
+
 }
 
 class MoonOrbit extends Orbit {
 
     #orbitPoints = [];
-    #numPoints = 200;
+    #numPoints = 500;
     #total = 27.32;
     #dt = this.#total / this.#numPoints;
     #prevHead;
@@ -163,7 +164,7 @@ class MoonOrbit extends Orbit {
     #lastTime;
 
     rangeLow = this.#numPoints * -0.3;
-    rangeHigh = this.#numPoints * 0.4;
+    rangeHigh = this.#numPoints * 0.7;
 
     constructor() {
         super();
@@ -315,6 +316,9 @@ class MoonOrbit extends Orbit {
     orbitCurve(jd) {
         if (this.#orbitPoints.length === 0) {
             this.#orbitPoints = this.orbitAtTime(jd);
+        } else if (Math.abs(jd - this.#lastTime) > this.#total / 3) {
+            this.#orbitPoints = this.orbitAtTime(jd);
+            console.log("change moon orbit");
         } else {
             if (jd > this.#lastTime) {
                 const now_head = jd + this.rangeLow * this.#dt;
@@ -339,8 +343,8 @@ class MoonOrbit extends Orbit {
                     this.#prevHead -= this.#dt;
                 }
             }
-           
         }
+        this.#lastTime = jd;
         const PointsCopy = this.#orbitPoints.slice();
         return PointsCopy;
     }
