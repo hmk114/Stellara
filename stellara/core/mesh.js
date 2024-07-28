@@ -4,6 +4,11 @@ import { BufferGeometry, Float32BufferAttribute, Vector3, Matrix3, TextureLoader
 import { radii } from './solar_system_data.js';
 import { vertexShaderPatcher, fragmentShaderPatcher } from './shader_patcher.js';
 
+import sunTextureUrl from '../assets/texture/sun.jpg';
+import earthTextureUrl from '../assets/texture/earth.jpg';
+import earthMapTextureUrl from '../assets/texture/earth_map.jpg';
+import moonTextureUrl from '../assets/texture/moon.jpg';
+
 class CelestialObjectGeometry extends BufferGeometry {
     constructor(radius = 1, transform = new Matrix3(), phiStart = 0, widthSegments = 32, heightSegments = 32) {
         super();
@@ -172,7 +177,7 @@ class MeshStandardMaterialPatched extends MeshStandardMaterial {
 function CreateSunMaterials() {
     return [
         new MeshStandardMaterial({
-            map: new TextureLoader().load('stellara/assets/texture/sun.jpg'),
+            map: new TextureLoader().load(sunTextureUrl),
             emissive: new Color(0xffffe0),
             emissiveIntensity: 1
         })
@@ -182,11 +187,11 @@ function CreateSunMaterials() {
 function CreateEarthMaterials(maxNumOpaqueObjectsInScene = 0) {
     return [
         new MeshStandardMaterialPatched(
-            { map: new TextureLoader().load('stellara/assets/texture/earth.jpg') },
+            { map: new TextureLoader().load(earthTextureUrl) },
             maxNumOpaqueObjectsInScene
         ),
         new MeshStandardMaterialPatched(
-            { map: new TextureLoader().load('stellara/assets/texture/earth_water.jpg') },
+            { map: new TextureLoader().load(earthMapTextureUrl) },
             maxNumOpaqueObjectsInScene
         )
     ];
@@ -195,7 +200,7 @@ function CreateEarthMaterials(maxNumOpaqueObjectsInScene = 0) {
 function CreateMoonMaterials(maxNumOpaqueObjectsInScene = 0) {
     return [
         new MeshStandardMaterialPatched(
-            { map: new TextureLoader().load('stellara/assets/texture/moon.jpg') },
+            { map: new TextureLoader().load(moonTextureUrl) },
             maxNumOpaqueObjectsInScene
         )
     ];
