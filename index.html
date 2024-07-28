@@ -9,7 +9,7 @@
 
 <body>
 	<div id="CenteredFlexColumn">
-		<div>
+		<div class="buttonline">
 			<button id="showPickerButton">设定时间</button>
 			<div id="pickerContainer">
 				<input type="text" id="datetimePicker">
@@ -51,25 +51,24 @@
 				</div>
 			</div>
 		</div>
-		
-		<div class="TimeSpeed">
-			<button id="HalfSpeed">
-				<svg width="16" height="16" viewBox="1 -1 16 16">
-					<path d="M8 8L14.67 2v12L8 8zm-6.67 0L8 2v12L1.33 8z"/>
-				  </svg>				  
-			</button>
-			<button id="Stop">
-				<svg width="16" height="16" viewBox="1 -1 16 16">
-					<path d="M4 4h9v9H4z"/>
-				  </svg>
-			</button>
-			<button id="TwotimesSpeed">
-				<svg width="16" height="16" viewBox="-1 -1 16 16">
-					<path d="M8 8L1.33 2v12L8 8zm6.67 0L8 2v12l6.67-6z"/>
-				  </svg>								
-			</button>
-			<button id="ReturnSpeed">初始速度</button>
-		</div>
+	</div>
+	<div class="TimeSpeed">
+		<button id="HalfSpeed">
+			<svg width="16" height="16" viewBox="1 -1 16 16">
+				<path d="M8 8L14.67 2v12L8 8zm-6.67 0L8 2v12L1.33 8z"/>
+			  </svg>				  
+		</button>
+		<button id="Stop">
+			<svg width="16" height="16" viewBox="1 -1 16 16">
+				<path d="M4 4h9v9H4z"/>
+			  </svg>
+		</button>
+		<button id="TwotimesSpeed">
+			<svg width="16" height="16" viewBox="-1 -1 16 16">
+				<path d="M8 8L1.33 2v12L8 8zm6.67 0L8 2v12l6.67-6z"/>
+			  </svg>								
+		</button>
+		<button id="ReturnSpeed">初始速度</button>
 	</div>
 	<div id="nowtime"></div>
 	<div id="timespeed"></div>
